@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QCM — Le rôle des feuilles</title>
+<style>
+  :root{
+    --soil: #2F2318;
+    --soil-light: #4A3A28;
+    --paper: #F4EFE2;
+    --leaf: #4C7A50;
+    --leaf-dark: #365939;
+    --clay: #B5652D;
+    --sage: #8FA888;
+    --ink: #241C13;
+    --ok: #3F7D4C;
+    --bad: #A6432F;
+    --line: rgba(36,28,19,0.14);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: var(--soil);
+    background-image:
+      radial-gradient(ellipse at 20% -10%, rgba(143,168,136,0.18), transparent 55%),
+      radial-gradient(ellipse at 90% 110%, rgba(181,101,45,0.15), transparent 55%);
+    color: var(--ink);
+    font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 28px 16px;
+  }
+  .frame{
+    width: 100%;
+    max-width: 620px;
+  }
+  .masthead{
+    text-align: left;
+    margin-bottom: 18px;
+    color: var(--paper);
+  }
+  .kicker{
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    color: var(--sage);
+    margin: 0 0 6px 0;
+  }
+  .masthead h1{
+    font-size: clamp(28px, 5vw, 38px);
+    margin: 0;
+    font-weight: 500;
+    line-height: 1.15;
+  }
+  .card{
+    background: var(--paper);
+    border-radius: 18px;
+    padding: 34px 32px 28px;
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.55);
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before{
+    content:"";
+    position:absolute;
+    left:0; right:0; top:0;
+    height: 6px;
+    background: linear-gradient(90deg, var(--leaf), var(--sage) 45%, var(--clay));
+  }
+  .roots{
+    display:flex;
+    gap: 6px;
+    margin-bottom: 24px;
+  }
+  .root-seg{
+    flex:1;
+    height: 5px;
+    border-radius: 3px;
+    background: var(--line);
+    position: relative;
+    overflow:hidden;
+  }
+  .root-seg span{
+    position:absolute; inset:0;
+    background: var(--leaf);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .35s ease;
+  }
+  .root-seg.filled span{ transform: scaleX(1); }
+  .root-seg.current span{ background: var(--clay); transform: scaleX(1); }
+
+  .q-label{
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 13px;
+    color: var(--leaf-dark);
+    margin: 0 0 10px 0;
+  }
+  .prompt{
+    font-size: 21px;
+    line-height: 1.4;
+    margin: 0 0 22px 0;
+    font-weight: 500;
+  }
+  .options{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .option{
+    text-align: left;
+    border: 1.5px solid var(--line);
+    background: #fff;
+    border-radius: 10px;
+    padding: 13px 16px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 15.5px;
+    color: var(--ink);
+    cursor: pointer;
+    transition: border-color .15s ease, background .15s ease, transform .1s ease;
+    line-height: 1.4;
+  }
+  .option:hover:not(:disabled){
+    border-color: var(--leaf);
+    background: #FBFAF4;
+  }
+  .option:active:not(:disabled){ transform: scale(0.995); }
+  .option:disabled{ cursor: default; }
+  .option.correct{
+    border-color: var(--ok);
+    background: rgba(63,125,76,0.10);
+  }
+  .option.incorrect{
+    border-color: var(--bad);
+    background: rgba(166,67,47,0.10);
+  }
+  .option.faded{ opacity: 0.55; }
+
+  .feedback{
+    margin-top: 16px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 14.5px;
+    line-height: 1.55;
+    display: none;
+  }
+  .feedback.show{ display:block; }
+  .feedback.ok{ background: rgba(63,125,76,0.12); color: var(--leaf-dark); }
+  .feedback.bad{ background: rgba(166,67,47,0.10); color: #7A3222; }
+  .feedback strong{ display:block; margin-bottom:4px; font-size:15px; }
+
+  .foot{
+    display:flex;
+    justify-content: flex-end;
+    margin-top: 22px;
+  }
+  .next-btn{
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 14.5px;
+    font-weight: 600;
+    background: var(--leaf-dark);
+    color: var(--paper);
+    border: none;
+    padding: 11px 22px;
+    border-radius: 999px;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity .2s ease, transform .2s ease, background .15s ease;
+    pointer-events: none;
+  }
+  .next-btn.show{ opacity:1; transform:none; pointer-events:auto; }
+  .next-btn:hover{ background: var(--soil-light); }
+
+  .result{
+    text-align:center;
+    display:none;
+  }
+  .result.show{ display:block; }
+  .result-num{
+    font-size: 54px;
+    font-weight: 600;
+    color: var(--leaf-dark);
+    line-height:1;
+    margin-bottom: 6px;
+  }
+  .result-sub{
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 15px;
+    color: var(--soil-light);
+    margin-bottom: 26px;
+  }
+  .restart-btn{
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 14.5px;
+    font-weight: 600;
+    background: transparent;
+    color: var(--leaf-dark);
+    border: 1.5px solid var(--leaf-dark);
+    padding: 10px 22px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .restart-btn:hover{ background: rgba(76,122,80,0.08); }
+
+  .recap{
+    text-align:left;
+    margin: 4px 0 28px 0;
+    border-top: 1px solid var(--line);
+    padding-top: 18px;
+  }
+  .recap-item{
+    display:flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 9px 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 14px;
+    line-height: 1.45;
+    border-bottom: 1px solid var(--line);
+  }
+  .recap-item:last-child{ border-bottom: none; }
+  .recap-mark{
+    flex: 0 0 20px;
+    height: 20px;
+    border-radius: 50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    margin-top: 1px;
+  }
+  .recap-mark.ok{ background: var(--ok); }
+  .recap-mark.bad{ background: var(--bad); }
+  .recap-text{ color: var(--ink); }
+
+  .quiz-body.hidden{ display:none; }
+
+  @media (max-width: 480px){
+    .card{ padding: 26px 20px 22px; }
+    .prompt{ font-size: 19px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="frame">
+  <div class="masthead">
+    <p class="kicker">Atelier feuille — SVT</p>
+    <h1>Le rôle des feuilles</h1>
+  </div>
+
+  <div class="card">
+    <div class="roots" id="roots"></div>
+
+    <div class="quiz-body" id="quizBody">
+      <p class="q-label" id="qLabel">Question 1 / 5</p>
+      <p class="prompt" id="qPrompt"></p>
+      <div class="options" id="qOptions"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="foot">
+        <button class="next-btn" id="nextBtn">Suivant</button>
+      </div>
+    </div>
+
+    <div class="result" id="result">
+      <div class="result-num" id="resultNum"></div>
+      <div class="result-sub" id="resultSub"></div>
+      <div class="recap" id="recap"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    prompt: "Qu'est-ce qu'un stomate ?",
+    options: [
+      "Une cellule unique chargée de produire l'amidon",
+      "Une ouverture formée par deux cellules de garde, permettant les échanges gazeux avec l'atmosphère",
+      "Un vaisseau conducteur de sève",
+      "Une racine microscopique présente sur les feuilles"
+    ],
+    correct: 1,
+    explanation: "Les cellules de garde sont associées par deux et laissent une ouverture entre elles : cet ensemble s'appelle un stomate. Les stomates permettent de réaliser des échanges gazeux entre la feuille et l'atmosphère."
+  },
+  {
+    prompt: "D'après le graphique, quelle relation existe entre l'ouverture des stomates et la quantité de CO2 incorporé par la plante ?",
+    options: [
+      "Plus les stomates sont ouverts, moins la plante incorpore de CO2",
+      "Plus les stomates sont ouverts, plus la plante incorpore de CO2",
+      "L'ouverture des stomates n'a aucune influence sur la quantité de CO2 incorporé",
+      "La quantité de CO2 incorporé est maximale quand les stomates sont fermés"
+    ],
+    correct: 1,
+    explanation: "Le graphique montre que plus l'ouverture des stomates augmente (en % de l'ouverture maximale), plus la quantité de CO2 incorporé par la plante augmente également."
+  },
+  {
+    prompt: "D'après le tableau de mesures du bioréacteur, que peut-on dire de l'évolution des concentrations en dioxygène et en CO2 entre 0 et 5 minutes ?",
+    options: [
+      "Le O2 diminue et le CO2 augmente : la plante respire (consomme O2, rejette CO2)",
+      "Le O2 augmente et le CO2 diminue : la plante fait uniquement de la photosynthèse",
+      "Le O2 et le CO2 restent stables",
+      "Le O2 et le CO2 augmentent tous les deux"
+    ],
+    correct: 0,
+    explanation: "Entre 0 et 5 minutes, la concentration en dioxygène diminue (250 → 225 µmol/L) tandis que la concentration en CO2 augmente (150 → 180 µmol/L) : cela correspond à la respiration de la plante, qui consomme du O2 et rejette du CO2, en l'absence de lumière suffisante pour la photosynthèse."
+  },
+  {
+    prompt: "Entre 5 et 15 minutes, le O2 augmente fortement et le CO2 diminue fortement. Comment interpréter ce changement par rapport à la phase précédente ?",
+    options: [
+      "La plante respire uniquement, sans faire de photosynthèse",
+      "La plante ne fait aucun échange gazeux",
+      "À la lumière, la photosynthèse produit plus de O2 et consomme plus de CO2 que ce que la respiration consomme et rejette",
+      "La respiration l'emporte sur la photosynthèse"
+    ],
+    correct: 2,
+    explanation: "Entre 5 et 15 minutes, le O2 augmente fortement (225 → 350 µmol/L) et le CO2 diminue fortement (180 → 50 µmol/L). Cela montre que la plante réalise à la fois la respiration et la photosynthèse, mais qu'à la lumière, la photosynthèse produit plus de O2 qu'elle n'en consomme en respirant, et consomme plus de CO2 qu'elle n'en rejette en respirant."
+  },
+  {
+    prompt: "Une feuille de betterave (feuille 1) est exposée à du CO2 radioactif (14C) pendant 4 heures. Une semaine plus tard, du 14C est retrouvé dans l'amidon des autres feuilles (2, 3, 4, 5) non exposées. Que démontre ce résultat ?",
+    options: [
+      "Chaque feuille fabrique son propre amidon indépendamment des autres",
+      "La matière organique (amidon) fabriquée par photosynthèse dans une feuille est redistribuée vers les autres feuilles",
+      "Le CO2 radioactif reste bloqué dans la feuille exposée et ne circule jamais",
+      "Les feuilles non exposées au 14CO2 ne contiennent jamais d'amidon"
+    ],
+    correct: 1,
+    explanation: "L'amidon (glucide fabriqué lors de la photosynthèse) contenant du 14C, produit dans la feuille 1 exposée au 14CO2, se retrouve une semaine plus tard dans les autres feuilles non exposées. Cela montre que la matière organique fabriquée par la photosynthèse dans une feuille est ensuite redistribuée vers le reste de la plante."
+  }
+];
+
+let current = 0;
+let score = 0;
+let answered = false;
+let userAnswers = [];
+
+const rootsEl = document.getElementById('roots');
+const qLabel = document.getElementById('qLabel');
+const qPrompt = document.getElementById('qPrompt');
+const qOptions = document.getElementById('qOptions');
+const feedbackEl = document.getElementById('feedback');
+const nextBtn = document.getElementById('nextBtn');
+const quizBody = document.getElementById('quizBody');
+const resultEl = document.getElementById('result');
+const resultNum = document.getElementById('resultNum');
+const resultSub = document.getElementById('resultSub');
+
+function buildRoots(){
+  rootsEl.innerHTML = '';
+  QUESTIONS.forEach((_, i) => {
+    const seg = document.createElement('div');
+    seg.className = 'root-seg';
+    seg.innerHTML = '<span></span>';
+    rootsEl.appendChild(seg);
+  });
+}
+
+function updateRoots(){
+  const segs = rootsEl.querySelectorAll('.root-seg');
+  segs.forEach((seg, i) => {
+    seg.classList.remove('filled','current');
+    if(i < current) seg.classList.add('filled');
+    if(i === current) seg.classList.add('current');
+  });
+}
+
+function renderQuestion(){
+  answered = false;
+  const q = QUESTIONS[current];
+  qLabel.textContent = `Question ${current+1} / ${QUESTIONS.length}`;
+  qPrompt.textContent = q.prompt;
+  qOptions.innerHTML = '';
+  feedbackEl.className = 'feedback';
+  feedbackEl.innerHTML = '';
+  nextBtn.classList.remove('show');
+  updateRoots();
+
+  q.options.forEach((opt, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.textContent = opt;
+    btn.addEventListener('click', () => selectAnswer(idx, btn));
+    qOptions.appendChild(btn);
+  });
+}
+
+function selectAnswer(idx, btnEl){
+  if(answered) return;
+  answered = true;
+  const q = QUESTIONS[current];
+  const allBtns = qOptions.querySelectorAll('.option');
+  allBtns.forEach((b, i) => {
+    b.disabled = true;
+    if(i === q.correct) b.classList.add('correct');
+    if(i === idx && idx !== q.correct) b.classList.add('incorrect');
+    if(i !== idx && i !== q.correct) b.classList.add('faded');
+  });
+
+  const isCorrect = idx === q.correct;
+  if(isCorrect) score++;
+  userAnswers[current] = isCorrect;
+
+  feedbackEl.className = 'feedback show ' + (isCorrect ? 'ok' : 'bad');
+  feedbackEl.innerHTML = `<strong>${isCorrect ? 'Exact !' : 'Pas tout à fait.'}</strong>${q.explanation}`;
+
+  nextBtn.textContent = current === QUESTIONS.length - 1 ? 'Voir le résultat' : 'Suivant';
+  nextBtn.classList.add('show');
+}
+
+nextBtn.addEventListener('click', () => {
+  current++;
+  if(current < QUESTIONS.length){
+    renderQuestion();
+  } else {
+    showResult();
+  }
+});
+
+function showResult(){
+  quizBody.classList.add('hidden');
+  resultEl.classList.add('show');
+  resultNum.textContent = `${score} / ${QUESTIONS.length} points`;
+  let msg = "";
+  if(score === QUESTIONS.length) msg = "Toutes les bonnes réponses : le rôle des feuilles n'a plus de secret pour toi.";
+  else if(score >= QUESTIONS.length - 1) msg = "Très bon résultat, presque parfait.";
+  else if(score >= QUESTIONS.length / 2) msg = "Un bon début, quelques notions restent à revoir.";
+  else msg = "Relis le document sur le rôle des feuilles et retente ta chance.";
+  resultSub.textContent = msg;
+
+  const recapEl = document.getElementById('recap');
+  recapEl.innerHTML = '';
+  QUESTIONS.forEach((q, i) => {
+    const ok = userAnswers[i];
+    const row = document.createElement('div');
+    row.className = 'recap-item';
+    row.innerHTML = `
+      <div class="recap-mark ${ok ? 'ok' : 'bad'}">${ok ? '✓' : '✕'}</div>
+      <div class="recap-text"><strong>Q${i+1}.</strong> ${q.prompt}</div>
+    `;
+    recapEl.appendChild(row);
+  });
+
+  updateRoots();
+}
+
+buildRoots();
+renderQuestion();
+</script>
+
+</body>
+</html>
