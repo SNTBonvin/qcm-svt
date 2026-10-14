@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catalogue des QCM SVT</title>
+<style>
+  :root {
+    --bleu: #2563eb;
+    --gris-fond: #f8fafc;
+    --gris-bordure: #e2e8f0;
+    --gris-texte: #334155;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--gris-fond);
+    color: var(--gris-texte);
+    margin: 0;
+    padding: 2rem 1rem 4rem;
+  }
+  .conteneur {
+    max-width: 880px;
+    margin: 0 auto;
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.8rem;
+  }
+  h1 {
+    font-size: 1.6rem;
+    margin: 0 0 0.2rem;
+  }
+  header p {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.95rem;
+  }
+  a.bouton-publier {
+    background: var(--bleu);
+    color: #fff;
+    text-decoration: none;
+    padding: 0.6rem 1.1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+  .filtres {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.6rem;
+  }
+  .filtres input, .filtres select {
+    padding: 0.55rem 0.8rem;
+    border: 1px solid var(--gris-bordure);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    background: #fff;
+  }
+  .filtres input { flex: 1; min-width: 180px; }
+
+  .groupe-niveau { margin-bottom: 2rem; }
+  .groupe-niveau h2 {
+    font-size: 1.05rem;
+    border-bottom: 2px solid var(--gris-bordure);
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.9rem;
+  }
+  .liste-qcm {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 0.8rem;
+  }
+  .carte-qcm {
+    display: block;
+    background: #fff;
+    border: 1px solid var(--gris-bordure);
+    border-radius: 10px;
+    padding: 0.9rem 1rem;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s;
+  }
+  .carte-qcm:hover { border-color: var(--bleu); }
+  .carte-qcm .titre-qcm {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 0.3rem;
+  }
+  .carte-qcm .domaine-qcm {
+    font-size: 0.82rem;
+    color: #64748b;
+  }
+  .vide {
+    text-align: center;
+    color: #94a3b8;
+    padding: 3rem 1rem;
+    font-size: 0.95rem;
+  }
+</style>
+</head>
+<body>
+<div class="conteneur">
+  <header>
+    <div>
+      <h1>Catalogue des QCM SVT</h1>
+      <p>QCM classés par niveau et par thème.</p>
+    </div>
+    <a class="bouton-publier" href="/publier.html">+ Publier un QCM</a>
+  </header>
+
+  <div class="filtres">
+    <input type="text" id="recherche" placeholder="Rechercher un thème ou un titre…">
+    <select id="filtre-niveau">
+      <option value="">Tous les niveaux</option>
+      <option value="6e">6e</option>
+      <option value="5e">5e</option>
+      <option value="4e">4e</option>
+      <option value="3e">3e</option>
+    </select>
+  </div>
+
+  <div id="contenu"></div>
+</div>
+
+<script>
+const ORDRE_NIVEAUX = ["6e", "5e", "4e", "3e"];
+let tousLesQcm = [];
+
+function normaliser(texte) {
+  return texte.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+}
+
+function afficher() {
+  const recherche = normaliser(document.getElementById("recherche").value.trim());
+  const niveauFiltre = document.getElementById("filtre-niveau").value;
+  const conteneur = document.getElementById("contenu");
+
+  const filtres = tousLesQcm.filter((q) => {
+    const correspondNiveau = !niveauFiltre || q.niveau === niveauFiltre;
+    const correspondRecherche =
+      !recherche ||
+      normaliser(q.titre).includes(recherche) ||
+      normaliser(q.domaine).includes(recherche);
+    return correspondNiveau && correspondRecherche;
+  });
+
+  if (filtres.length === 0) {
+    conteneur.innerHTML = `<p class="vide">Aucun QCM ne correspond pour l'instant.</p>`;
+    return;
+  }
+
+  let html = "";
+  for (const niveau of ORDRE_NIVEAUX) {
+    const qcmDuNiveau = filtres.filter((q) => q.niveau === niveau);
+    if (qcmDuNiveau.length === 0) continue;
+
+    html += `<section class="groupe-niveau"><h2>${niveau}</h2><div class="liste-qcm">`;
+    for (const q of qcmDuNiveau) {
+      html += `
+        <a class="carte-qcm" href="${q.chemin}">
+          <div class="titre-qcm">${q.titre}</div>
+          <div class="domaine-qcm">${q.domaine}</div>
+        </a>`;
+    }
+    html += `</div></section>`;
+  }
+  conteneur.innerHTML = html;
+}
+
+fetch("/data/index.json")
+  .then((r) => r.json())
+  .then((liste) => {
+    tousLesQcm = liste;
+    afficher();
+  })
+  .catch(() => {
+    document.getElementById("contenu").innerHTML =
+      `<p class="vide">Impossible de charger le catalogue pour l'instant.</p>`;
+  });
+
+document.getElementById("recherche").addEventListener("input", afficher);
+document.getElementById("filtre-niveau").addEventListener("change", afficher);
+</script>
+</body>
+</html>

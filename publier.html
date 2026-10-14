@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Publier un QCM</title>
+<style>
+  :root {
+    --bleu: #2563eb;
+    --bleu-fonce: #1d4ed8;
+    --gris-fond: #f8fafc;
+    --gris-bordure: #e2e8f0;
+    --gris-texte: #334155;
+    --vert: #16a34a;
+    --rouge: #dc2626;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--gris-fond);
+    color: var(--gris-texte);
+    margin: 0;
+    padding: 2rem 1rem;
+    display: flex;
+    justify-content: center;
+  }
+  main {
+    width: 100%;
+    max-width: 560px;
+    background: #fff;
+    border: 1px solid var(--gris-bordure);
+    border-radius: 12px;
+    padding: 2rem;
+  }
+  h1 {
+    font-size: 1.4rem;
+    margin: 0 0 0.3rem;
+  }
+  p.sous-titre {
+    margin: 0 0 1.8rem;
+    color: #64748b;
+    font-size: 0.95rem;
+  }
+  label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin: 1.1rem 0 0.35rem;
+  }
+  input[type="text"], select, input[type="file"] {
+    width: 100%;
+    padding: 0.6rem 0.7rem;
+    border: 1px solid var(--gris-bordure);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+  }
+  input[type="text"]:focus, select:focus {
+    outline: 2px solid var(--bleu);
+    outline-offset: 1px;
+  }
+  .apercu-url {
+    margin-top: 0.4rem;
+    font-size: 0.85rem;
+    color: #64748b;
+    word-break: break-all;
+  }
+  .apercu-url code {
+    background: var(--gris-fond);
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+  }
+  button {
+    margin-top: 1.8rem;
+    width: 100%;
+    padding: 0.8rem;
+    background: var(--bleu);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  button:hover { background: var(--bleu-fonce); }
+  button:disabled { background: #93c5fd; cursor: wait; }
+
+  #statut {
+    margin-top: 1.2rem;
+    padding: 0.9rem 1rem;
+    border-radius: 8px;
+    font-size: 0.92rem;
+    display: none;
+  }
+  #statut.ok {
+    display: block;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #166534;
+  }
+  #statut.erreur {
+    display: block;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+  }
+  .lien-final {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.6rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .lien-final a {
+    color: var(--bleu);
+    font-weight: 600;
+    word-break: break-all;
+  }
+  .lien-final button {
+    margin: 0;
+    width: auto;
+    padding: 0.35rem 0.7rem;
+    font-size: 0.85rem;
+    background: #fff;
+    color: var(--bleu);
+    border: 1px solid var(--bleu);
+  }
+  .lien-final button:hover { background: #eff6ff; }
+  .note {
+    margin-top: 0.6rem;
+    font-size: 0.82rem;
+    color: #64748b;
+  }
+  a.retour {
+    display: inline-block;
+    margin-top: 1.5rem;
+    font-size: 0.88rem;
+    color: #64748b;
+    text-decoration: none;
+  }
+  a.retour:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Publier un QCM</h1>
+  <p class="sous-titre">Dépose ton fichier HTML, renseigne les informations, et clique sur publier.</p>
+
+  <form id="formulaire">
+    <label for="fichier">Fichier HTML du QCM</label>
+    <input type="file" id="fichier" accept=".html,.htm" required>
+
+    <label for="titre">Titre</label>
+    <input type="text" id="titre" placeholder="Ex. Les groupes sanguins" required>
+
+    <label for="domaine">Thème</label>
+    <input type="text" id="domaine" list="domaines-existants" placeholder="Ex. Génétique" required>
+    <datalist id="domaines-existants"></datalist>
+
+    <label for="niveau">Niveau</label>
+    <select id="niveau" required>
+      <option value="" disabled selected>Choisir un niveau</option>
+      <option value="6e">6e</option>
+      <option value="5e">5e</option>
+      <option value="4e">4e</option>
+      <option value="3e">3e</option>
+    </select>
+
+    <label for="slug">Identifiant du lien (modifiable)</label>
+    <input type="text" id="slug" placeholder="généré automatiquement depuis le titre">
+    <p class="apercu-url">Lien final : <code id="apercu">…</code></p>
+
+    <button type="submit" id="bouton-publier">Publier</button>
+  </form>
+
+  <div id="statut"></div>
+
+  <a class="retour" href="/">← Retour au catalogue</a>
+</main>
+
+<script>
+const champFichier = document.getElementById("fichier");
+const champTitre = document.getElementById("titre");
+const champDomaine = document.getElementById("domaine");
+const champNiveau = document.getElementById("niveau");
+const champSlug = document.getElementById("slug");
+const apercu = document.getElementById("apercu");
+const bouton = document.getElementById("bouton-publier");
+const statut = document.getElementById("statut");
+const listeDomaines = document.getElementById("domaines-existants");
+
+let slugModifieManuellement = false;
+
+function slugifier(texte) {
+  return texte
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+}
+
+function mettreAJourApercu() {
+  const niveau = champNiveau.value || "niveau";
+  const slug = champSlug.value || "identifiant";
+  apercu.textContent = `${window.location.origin}/qcm/${niveau}/${slug}/`;
+}
+
+champTitre.addEventListener("input", () => {
+  if (!slugModifieManuellement) {
+    champSlug.value = slugifier(champTitre.value);
+  }
+  mettreAJourApercu();
+});
+
+champSlug.addEventListener("input", () => {
+  slugModifieManuellement = true;
+  champSlug.value = slugifier(champSlug.value);
+  mettreAJourApercu();
+});
+
+champNiveau.addEventListener("change", mettreAJourApercu);
+
+// Suggestions de thèmes déjà utilisés, pour limiter les doublons par coquille.
+fetch("/data/index.json")
+  .then((r) => r.json())
+  .then((liste) => {
+    const domaines = [...new Set(liste.map((q) => q.domaine))];
+    listeDomaines.innerHTML = domaines.map((d) => `<option value="${d}">`).join("");
+  })
+  .catch(() => {});
+
+function afficherStatut(classe, html) {
+  statut.className = classe;
+  statut.innerHTML = html;
+}
+
+document.getElementById("formulaire").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  statut.className = "";
+  statut.innerHTML = "";
+
+  const fichier = champFichier.files[0];
+  if (!fichier) return;
+
+  bouton.disabled = true;
+  bouton.textContent = "Publication en cours…";
+
+  try {
+    const htmlContent = await fichier.text();
+
+    const reponseServeur = await fetch("/.netlify/functions/publier", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        titre: champTitre.value.trim(),
+        domaine: champDomaine.value.trim(),
+        niveau: champNiveau.value,
+        slug: champSlug.value.trim(),
+        htmlContent,
+      }),
+    });
+
+    const resultat = await reponseServeur.json();
+
+    if (!reponseServeur.ok) {
+      afficherStatut("erreur", resultat.erreur || "Une erreur est survenue.");
+      return;
+    }
+
+    const lienComplet = `${window.location.origin}${resultat.chemin}`;
+    afficherStatut("ok", `
+      <strong>QCM publié ✓</strong>
+      <div class="lien-final">
+        <a href="${lienComplet}" target="_blank">${lienComplet}</a>
+        <button type="button" id="copier">Copier le lien</button>
+      </div>
+      <p class="note">Le lien sera actif dans une à deux minutes, le temps que le site se mette à jour.</p>
+    `);
+
+    document.getElementById("copier").addEventListener("click", () => {
+      navigator.clipboard.writeText(lienComplet);
+      document.getElementById("copier").textContent = "Copié !";
+    });
+
+    document.getElementById("formulaire").reset();
+    slugModifieManuellement = false;
+    mettreAJourApercu();
+  } catch (err) {
+    afficherStatut("erreur", "Impossible de contacter le serveur. Vérifie ta connexion et réessaie.");
+  } finally {
+    bouton.disabled = false;
+    bouton.textContent = "Publier";
+  }
+});
+
+mettreAJourApercu();
+</script>
+</body>
+</html>
