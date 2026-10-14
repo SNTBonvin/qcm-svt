@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QCM — La cellule</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='92' fill='%23173d2f'/><text x='236' y='310' font-family='Arial' font-size='150' font-weight='bold' fill='white' text-anchor='middle'>VDL</text><circle cx='369' cy='369' r='42' fill='%23b2d158'/></svg>">
+<style>
+:root{
+  --primary:#275f4a; --primary-hover:#1d4c3b; --primary-dark:#173d2f;
+  --primary-light:#356f57; --primary-tint:#e9efe9; --primary-tint2:#f2f4ee;
+  --ink:#221f1a; --warm-700:#4a4339; --warm-500:#6e6557; --warm-400:#988e7e;
+  --line:#e8e3d9; --line-soft:#f0ece3; --paper:#f6f4ee; --card:#fffdf8;
+  --success:#356f57; --success-tint:#e9efe9;
+  --warning:#8c6411; --warning-tint:#f3ebd8;
+  --error:#a4453a;   --error-tint:#f3e6e2;
+  --shadow-card:0 1px 2px rgba(16,40,34,.05), 0 6px 18px -10px rgba(16,40,34,.18);
+  --shadow-pop:0 8px 30px -12px rgba(16,40,34,.28);
+  --r-card:16px; --r-btn:10px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);line-height:1.55;-webkit-text-size-adjust:100%;
+     font-family:"Hanken Grotesk Variable","Hanken Grotesk",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:720px;margin:0 auto;padding:20px 16px 48px}
+.hidden{display:none}
+
+.hero{background:var(--primary);color:#fff;border-radius:var(--r-card);padding:22px 20px;
+      margin-bottom:20px;box-shadow:var(--shadow-card);display:flex;align-items:center;gap:14px}
+.hero h1{margin:0 0 6px;font-size:1.45rem;letter-spacing:-.01em}
+.hero p{margin:0;color:#dee7e3;font-size:.95rem}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);
+      padding:20px;margin-bottom:16px;box-shadow:var(--shadow-card)}
+.card h2{margin:0 0 12px;font-size:1.1rem;color:var(--primary-dark)}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;
+     padding:11px 18px;border:0;border-radius:var(--r-btn);background:var(--primary);color:#fff;
+     font:inherit;font-weight:600;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-hover)}
+.btn:focus-visible{outline:3px solid var(--primary-light);outline-offset:2px}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.btn-ghost{background:transparent;color:var(--primary);border:1px solid var(--line)}
+.btn-ghost:hover{background:var(--primary-tint2)}
+.btn-wide{width:100%}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.actions .btn{flex:1 1 auto}
+
+.msg{padding:12px 14px;border-radius:var(--r-btn);border-left:4px solid;margin:12px 0;font-size:.95rem}
+.msg strong{display:block;margin-bottom:4px}
+.ok{background:var(--success-tint);border-color:var(--success);color:var(--primary-dark)}
+.warn{background:var(--warning-tint);border-color:var(--warning);color:var(--warning)}
+.err{background:var(--error-tint);border-color:var(--error);color:var(--error)}
+
+.badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.8rem;font-weight:600;
+       background:var(--primary-tint);color:var(--primary-dark)}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;
+        font-size:.85rem;color:var(--warm-500);font-weight:600}
+.bar{height:8px;background:var(--line-soft);border-radius:999px;overflow:hidden;margin-bottom:18px}
+.bar>span{display:block;height:100%;background:var(--primary);border-radius:999px;width:0;
+          transition:width .3s ease}
+
+.choices{display:flex;flex-direction:column;gap:10px}
+.choice{display:flex;align-items:flex-start;gap:12px;width:100%;text-align:left;min-height:44px;
+        padding:13px 15px;font:inherit;font-size:16px;cursor:pointer;background:#fff;color:var(--ink);
+        border:1px solid var(--line);border-radius:var(--r-btn);
+        transition:border-color .15s,background .15s}
+.choice:hover:not([disabled]){border-color:var(--primary-light);background:var(--primary-tint2)}
+.choice .key{flex:0 0 26px;height:26px;border-radius:8px;background:var(--primary-tint);
+             color:var(--primary-dark);font-weight:700;font-size:.85rem;
+             display:flex;align-items:center;justify-content:center}
+.choice.is-right{border-color:var(--success);background:var(--success-tint)}
+.choice.is-right .key{background:var(--success);color:#fff}
+.choice.is-wrong{border-color:var(--error);background:var(--error-tint)}
+.choice.is-wrong .key{background:var(--error);color:#fff}
+.choice.is-dim{opacity:.55}
+
+.score{text-align:center;padding:8px 0 4px}
+.score .pct{display:block;font-size:3rem;font-weight:700;color:var(--primary-dark);
+            line-height:1.1;letter-spacing:-.02em}
+.score .detail{color:var(--warm-500);font-size:.95rem}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+.stat{flex:1 1 120px;background:var(--primary-tint2);border-radius:var(--r-btn);padding:12px 14px}
+.stat b{display:block;font-size:1.3rem;color:var(--primary-dark)}
+.stat span{font-size:.82rem;color:var(--warm-500)}
+
+table{width:100%;border-collapse:collapse;font-size:.95rem}
+th{background:var(--primary);color:#fff;text-align:left;padding:10px 12px;font-weight:600}
+td{border-bottom:1px solid var(--line);padding:10px 12px}
+tr:nth-child(even) td{background:#fcfbf6}
+
+footer{text-align:center;color:var(--warm-400);font-size:.8rem;margin-top:28px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <svg width="40" height="40" viewBox="0 0 512 512" aria-hidden="true" style="flex:0 0 auto">
+      <rect width="512" height="512" rx="92" fill="#173d2f"/>
+      <text x="236" y="310" font-family="Arial,Helvetica,sans-serif" font-size="150"
+            font-weight="bold" fill="#fff" text-anchor="middle" letter-spacing="2">VDL</text>
+      <circle cx="369" cy="369" r="42" fill="#b2d158"/>
+    </svg>
+    <div>
+      <h1>QCM — La cellule</h1>
+      <p>SVT · 6e · 5 questions</p>
+    </div>
+  </div>
+
+  <!-- Écran d'accueil -->
+  <section id="ecran-accueil">
+    <div class="card">
+      <h2>Avant de commencer</h2>
+      <p>5 questions sur les notions de base de la cellule. Après chaque réponse, une explication s'affiche avant de passer à la suite.</p>
+      <p id="meilleur-score" class="badge hidden"></p>
+      <div class="actions">
+        <button class="btn btn-wide" id="bouton-demarrer">Commencer</button>
+      </div>
+    </div>
+    <p style="color:var(--warm-500);font-size:.85rem;text-align:center">
+      Ton score reste uniquement sur cet appareil : personne d'autre ne le voit.
+    </p>
+  </section>
+
+  <!-- Écran d'activité -->
+  <section id="ecran-activite" class="hidden">
+    <div class="topbar">
+      <span id="progression-texte">Question 1 / 5</span>
+      <span id="score-courant">0 bonne réponse</span>
+    </div>
+    <div class="bar"><span id="barre-progression"></span></div>
+
+    <div class="card">
+      <h2 id="texte-question"></h2>
+      <div class="choices" id="liste-choix"></div>
+      <div id="zone-explication" aria-live="polite"></div>
+      <div class="actions hidden" id="zone-suivant">
+        <button class="btn btn-wide" id="bouton-suivant">Suivant</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Écran de bilan -->
+  <section id="ecran-bilan" class="hidden">
+    <div class="card">
+      <div class="score">
+        <span class="pct" id="pourcentage-final">0 %</span>
+        <span class="detail" id="detail-final"></span>
+      </div>
+      <div id="message-final"></div>
+      <div class="stats">
+        <div class="stat"><b id="stat-bonnes">0</b><span>bonnes réponses</span></div>
+        <div class="stat"><b id="stat-total">5</b><span>questions</span></div>
+      </div>
+    </div>
+
+    <div class="card hidden" id="carte-revision">
+      <h2>À revoir</h2>
+      <div id="liste-revision"></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-ghost btn-wide" id="bouton-accueil">Retour à l'accueil</button>
+      <button class="btn btn-wide" id="bouton-recommencer">Recommencer</button>
+    </div>
+  </section>
+
+  <footer>CATP — Lycée Polyvalent du Val de Lys</footer>
+</div>
+
+<script>
+// Données du QCM : un tableau plat, facile à modifier sans toucher au reste.
+var QUESTIONS = [
+  {
+    question: "Quelle structure délimite et protège une cellule ?",
+    choix: ["Le noyau", "La membrane plasmique", "La mitochondrie", "Le cytoplasme"],
+    bonne: 1,
+    explication: "La membrane plasmique entoure la cellule et contrôle ce qui entre et sort. Le noyau contient l'ADN, la mitochondrie produit de l'énergie, le cytoplasme est le milieu intérieur de la cellule."
+  },
+  {
+    question: "Quel élément contient l'information génétique dans une cellule animale ?",
+    choix: ["Le noyau", "La mitochondrie", "Le ribosome", "La vacuole"],
+    bonne: 0,
+    explication: "Le noyau renferme l'ADN, support de l'information génétique. Les autres éléments ont d'autres rôles : énergie, fabrication de protéines, stockage."
+  },
+  {
+    question: "Quelle structure est présente chez la cellule végétale mais absente chez la cellule animale ?",
+    choix: ["La membrane plasmique", "Le noyau", "Le chloroplaste", "La mitochondrie"],
+    bonne: 2,
+    explication: "Le chloroplaste, siège de la photosynthèse, est spécifique aux cellules végétales. Membrane plasmique, noyau et mitochondrie existent dans les deux types de cellules."
+  },
+  {
+    question: "Quel organite est le siège de la production d'énergie de la cellule ?",
+    choix: ["Le noyau", "La mitochondrie", "Le ribosome", "La vacuole"],
+    bonne: 1,
+    explication: "La mitochondrie transforme les nutriments en énergie utilisable par la cellule, lors de la respiration cellulaire."
+  },
+  {
+    question: "Comment appelle-t-on un ensemble de cellules de même type assurant une fonction commune ?",
+    choix: ["Un organe", "Un organisme", "Un tissu", "Un appareil"],
+    bonne: 2,
+    explication: "Un tissu regroupe des cellules semblables assurant ensemble une même fonction (ex. le tissu musculaire). Plusieurs tissus forment un organe."
+  }
+];
+
+var CLE = "catp-qcm-test-cellule-v1";
+
+function lireMemoire(){
+  try{ var b = localStorage.getItem(CLE); return b ? JSON.parse(b) : {}; }
+  catch(e){ return {}; }
+}
+function ecrireMemoire(d){
+  try{ localStorage.setItem(CLE, JSON.stringify(d)); }catch(e){ /* stockage bloqué, pas grave */ }
+}
+
+var session = null;
+
+function montrer(id){
+  ["ecran-accueil","ecran-activite","ecran-bilan"].forEach(function(e){
+    document.getElementById(e).classList.toggle("hidden", e !== id);
+  });
+  window.scrollTo(0,0);
+}
+
+function melanger(tableau){
+  var copie = tableau.slice();
+  for (var i = copie.length - 1; i > 0; i--){
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = copie[i]; copie[i] = copie[j]; copie[j] = tmp;
+  }
+  return copie;
+}
+
+function demarrer(){
+  var ordre = melanger(QUESTIONS.map(function(_, i){ return i; }));
+  session = { ordre: ordre, indexCourant: 0, bonnesReponses: 0, erreurs: [] };
+  montrer("ecran-activite");
+  afficherQuestion();
+}
+
+function afficherQuestion(){
+  var indexQuestion = session.ordre[session.indexCourant];
+  var q = QUESTIONS[indexQuestion];
+
+  document.getElementById("progression-texte").textContent =
+    "Question " + (session.indexCourant + 1) + " / " + QUESTIONS.length;
+  document.getElementById("score-courant").textContent =
+    session.bonnesReponses + " bonne" + (session.bonnesReponses > 1 ? "s" : "") + " réponse" + (session.bonnesReponses > 1 ? "s" : "");
+  document.getElementById("barre-progression").style.width =
+    Math.round((session.indexCourant / QUESTIONS.length) * 100) + "%";
+
+  document.getElementById("texte-question").textContent = q.question;
+  document.getElementById("zone-explication").innerHTML = "";
+  document.getElementById("zone-suivant").classList.add("hidden");
+
+  var lettres = ["A", "B", "C", "D"];
+  var ordreChoix = melanger(q.choix.map(function(_, i){ return i; }));
+
+  var conteneur = document.getElementById("liste-choix");
+  conteneur.innerHTML = "";
+  ordreChoix.forEach(function(indexChoix, position){
+    var bouton = document.createElement("button");
+    bouton.type = "button";
+    bouton.className = "choice";
+    bouton.innerHTML = '<span class="key">' + lettres[position] + '</span><span>' + q.choix[indexChoix] + "</span>";
+    bouton.addEventListener("click", function(){ repondre(indexChoix, q, bouton, conteneur); });
+    conteneur.appendChild(bouton);
+  });
+}
+
+function repondre(indexChoisi, q, boutonClique, conteneur){
+  var boutons = conteneur.querySelectorAll(".choice");
+  boutons.forEach(function(b){ b.disabled = true; b.classList.add("is-dim"); });
+
+  var correct = indexChoisi === q.bonne;
+  boutonClique.classList.remove("is-dim");
+  boutonClique.classList.add(correct ? "is-right" : "is-wrong");
+
+  if (!correct){
+    boutons.forEach(function(b){
+      if (b.textContent.trim().endsWith(q.choix[q.bonne])) {
+        b.classList.remove("is-dim");
+        b.classList.add("is-right");
+      }
+    });
+    session.erreurs.push({
+      question: q.question,
+      reponseDonnee: q.choix[indexChoisi],
+      bonneReponse: q.choix[q.bonne],
+      explication: q.explication
+    });
+  } else {
+    session.bonnesReponses++;
+  }
+
+  var zone = document.getElementById("zone-explication");
+  zone.innerHTML = '<div class="msg ' + (correct ? "ok" : "err") + '"><strong>' +
+    (correct ? "Bonne réponse !" : "Pas tout à fait.") + "</strong>" + q.explication + "</div>";
+
+  document.getElementById("score-courant").textContent =
+    session.bonnesReponses + " bonne" + (session.bonnesReponses > 1 ? "s" : "") + " réponse" + (session.bonnesReponses > 1 ? "s" : "");
+  document.getElementById("zone-suivant").classList.remove("hidden");
+}
+
+function suivant(){
+  session.indexCourant++;
+  if (session.indexCourant >= QUESTIONS.length){
+    afficherBilan();
+  } else {
+    afficherQuestion();
+  }
+}
+
+function afficherBilan(){
+  document.getElementById("barre-progression").style.width = "100%";
+  var pourcentage = Math.round((session.bonnesReponses / QUESTIONS.length) * 100);
+
+  document.getElementById("pourcentage-final").textContent = pourcentage + " %";
+  document.getElementById("detail-final").textContent =
+    session.bonnesReponses + " bonne" + (session.bonnesReponses > 1 ? "s" : "") + " réponse" + (session.bonnesReponses > 1 ? "s" : "") + " sur " + QUESTIONS.length;
+  document.getElementById("stat-bonnes").textContent = session.bonnesReponses;
+  document.getElementById("stat-total").textContent = QUESTIONS.length;
+
+  var messageEl = document.getElementById("message-final");
+  var messageClasse, messageTexte;
+  if (pourcentage === 100){
+    messageClasse = "ok"; messageTexte = "Excellent, tout est acquis !";
+  } else if (pourcentage >= 60){
+    messageClasse = "ok"; messageTexte = "Tu progresses, relis les points manqués ci-dessous.";
+  } else if (pourcentage >= 40){
+    messageClasse = "warn"; messageTexte = "Presque ! Reprends les notions ci-dessous puis réessaie.";
+  } else {
+    messageClasse = "warn"; messageTexte = "Pas tout à fait encore. Relis le cours sur la cellule et retente le QCM.";
+  }
+  messageEl.innerHTML = '<div class="msg ' + messageClasse + '"><strong>' + messageTexte + "</strong></div>";
+
+  var carteRevision = document.getElementById("carte-revision");
+  var listeRevision = document.getElementById("liste-revision");
+  if (session.erreurs.length > 0){
+    carteRevision.classList.remove("hidden");
+    listeRevision.innerHTML = session.erreurs.map(function(e){
+      return '<div class="msg err"><strong>' + e.question + "</strong>" +
+        "Ta réponse : " + e.reponseDonnee + "<br>Bonne réponse : " + e.bonneReponse +
+        "<br>" + e.explication + "</div>";
+    }).join("");
+  } else {
+    carteRevision.classList.add("hidden");
+  }
+
+  var memoire = lireMemoire();
+  if (!memoire.meilleurScore || pourcentage > memoire.meilleurScore){
+    memoire.meilleurScore = pourcentage;
+    ecrireMemoire(memoire);
+  }
+
+  montrer("ecran-bilan");
+}
+
+function majAffichageMeilleurScore(){
+  var memoire = lireMemoire();
+  var el = document.getElementById("meilleur-score");
+  if (memoire.meilleurScore !== undefined){
+    el.textContent = "Ton meilleur score : " + memoire.meilleurScore + " %";
+    el.classList.remove("hidden");
+  }
+}
+
+document.getElementById("bouton-demarrer").addEventListener("click", demarrer);
+document.getElementById("bouton-suivant").addEventListener("click", suivant);
+document.getElementById("bouton-recommencer").addEventListener("click", demarrer);
+document.getElementById("bouton-accueil").addEventListener("click", function(){
+  majAffichageMeilleurScore();
+  montrer("ecran-accueil");
+});
+
+majAffichageMeilleurScore();
+</script>
+</body>
+</html>
