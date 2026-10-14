@@ -3,4 +3,4 @@
   functions = "netlify/functions"
 
 [build.environment]
-  SECRETS_SCAN_OMIT_KEYS = "GITHUB_TOKEN"
+  SECRETS_SCAN_OMIT_KEYS = "GITHUB_TOKEN,GITHUB_REPO,GITHUB_BRANCH"
