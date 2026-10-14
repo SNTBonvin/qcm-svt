@@ -1,0 +1,431 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Révisions SVT Cellules végétales</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Exo+2:wght@500;700;800&family=Barlow:wght@400;500;600&display=swap">
+<style>
+/* Layout: one centred column, tabs switch between flashcards and QCM. Colours come from the course slides: navy text, leaf green, water blue, and red for "à retenir". */
+:root {
+  --bg: #f4f7f2;
+  --surface: #ffffff;
+  --fg: #14224d;
+  --muted: #5a6784;
+  --line: #d5ddd3;
+  --green: #4a7a37;
+  --green-soft: #e1eed6;
+  --blue: #2c5aa8;
+  --blue-soft: #e0e9f7;
+  --red: #c4161c;
+  --red-soft: #fce8e8;
+  --bad: #a8430e;
+  --bad-soft: #fbe9dd;
+  --display: "Exo 2", "Trebuchet MS", system-ui, sans-serif;
+  --body: "Barlow", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1526; --surface: #172038; --fg: #e8edf8; --muted: #9ba8c6; --line: #2a3657;
+    --green: #93c571; --green-soft: #1e3222; --blue: #86adf0; --blue-soft: #1b2a48;
+    --red: #ff8080; --red-soft: #3a1d26; --bad: #ffa273; --bad-soft: #3a2619;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1526; --surface: #172038; --fg: #e8edf8; --muted: #9ba8c6; --line: #2a3657;
+  --green: #93c571; --green-soft: #1e3222; --blue: #86adf0; --blue-soft: #1b2a48;
+  --red: #ff8080; --red-soft: #3a1d26; --bad: #ffa273; --bad-soft: #3a2619;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 17px; line-height: 1.5;
+  padding-inline: 16px; padding-block: 28px 56px;
+}
+.wrap { max-width: 720px; margin-inline: auto; display: flex; flex-direction: column; gap: 22px; }
+header { display: flex; flex-direction: column; gap: 6px; }
+.eyebrow { font-family: var(--display); font-weight: 700; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--green); }
+h1 { font-family: var(--display); font-weight: 800; font-size: clamp(26px, 6vw, 38px); line-height: 1.12; margin: 0; text-wrap: balance; }
+.lead { margin: 0; color: var(--muted); text-wrap: pretty; }
+.legend { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); }
+.dot { width: 12px; height: 12px; border-radius: 50%; background: var(--red); flex: none; }
+
+.tabs { display: flex; gap: 8px; border-bottom: 2px solid var(--line); }
+.tab {
+  font-family: var(--display); font-weight: 700; font-size: 17px; background: none; color: var(--muted);
+  border: 0; border-bottom: 4px solid transparent; margin-bottom: -2px; padding: 10px 14px; cursor: pointer; border-radius: 6px 6px 0 0;
+}
+.tab[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--green); }
+.tab:hover { color: var(--fg); }
+:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+
+.meter { display: flex; align-items: center; gap: 12px; font-family: var(--display); font-weight: 700; font-size: 15px; font-variant-numeric: tabular-nums; }
+.bar { flex: 1; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
+.bar > i { display: block; height: 100%; width: 0; background: var(--green); transition: width .3s; }
+
+/* Flashcards */
+.card {
+  display: grid; width: 100%; text-align: left; padding: 0; border: 0; background: none; color: inherit; font: inherit; cursor: pointer;
+  perspective: 1200px;
+}
+.card-inner { display: grid; transform-style: preserve-3d; transition: transform .5s; }
+.card.flipped .card-inner { transform: rotateY(180deg); }
+.card.noanim .card-inner { transition: none; }
+.face {
+  grid-area: 1 / 1; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  min-height: 300px; padding: 22px 22px 26px; border-radius: 14px; border: 2px solid var(--line); background: var(--surface);
+  display: flex; flex-direction: column; gap: 14px;
+}
+.face.back { transform: rotateY(180deg); border-color: var(--red); background: var(--red-soft); }
+.tag { font-size: 13px; color: var(--muted); letter-spacing: .02em; }
+.label { font-family: var(--display); font-weight: 800; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+.front .label { color: var(--blue); }
+.back .label { color: var(--red); }
+.txt { font-size: clamp(19px, 4.4vw, 23px); line-height: 1.42; margin: auto 0; text-wrap: pretty; }
+.front .txt { font-family: var(--display); font-weight: 700; }
+.back .txt { color: var(--red); font-weight: 500; }
+.back .txt b { font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.back .txt .ex { color: var(--blue); font-weight: 600; text-decoration: none; }
+.hint { align-self: flex-end; font-size: 13px; color: var(--muted); }
+.row { display: flex; flex-wrap: wrap; gap: 10px; }
+.row.center { justify-content: center; }
+.btn {
+  font-family: var(--display); font-weight: 700; font-size: 16px; padding: 12px 18px; border-radius: 10px; cursor: pointer;
+  border: 2px solid var(--line); background: var(--surface); color: var(--fg); min-height: 48px;
+}
+.btn:hover:not(:disabled) { border-color: var(--fg); }
+.btn:disabled { opacity: .45; cursor: default; }
+.btn.primary { background: var(--green); border-color: var(--green); color: #fff; }
+.btn.review { border-color: var(--bad); color: var(--bad); }
+.btn.known { border-color: var(--green); color: var(--green); }
+:root[data-theme="dark"] .btn.primary { color: #0e1526; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn.primary { color: #0e1526; } }
+.grow { flex: 1 1 140px; }
+.spacer { flex: 1; }
+
+/* QCM */
+.q { font-family: var(--display); font-weight: 700; font-size: clamp(20px, 4.6vw, 25px); line-height: 1.3; margin: 0; text-wrap: balance; }
+.opts { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.opt {
+  width: 100%; display: flex; gap: 14px; align-items: flex-start; text-align: left; font: inherit; color: var(--fg);
+  background: var(--surface); border: 2px solid var(--line); border-radius: 12px; padding: 13px 14px; cursor: pointer;
+}
+.opt:hover:not(:disabled) { border-color: var(--blue); }
+.opt .ltr { font-family: var(--display); font-weight: 800; width: 28px; height: 28px; border-radius: 50%; background: var(--blue-soft); color: var(--blue); display: grid; place-items: center; flex: none; font-size: 15px; }
+.opt .t { min-width: 0; padding-top: 2px; }
+.opt:disabled { cursor: default; }
+.opt.right { border-color: var(--green); background: var(--green-soft); }
+.opt.right .ltr { background: var(--green); color: #fff; }
+.opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.opt.wrong .ltr { background: var(--bad); color: #fff; }
+.opt.dim { opacity: .6; }
+.fb { border-radius: 12px; padding: 14px 16px; background: var(--blue-soft); }
+.fb strong { font-family: var(--display); }
+.fb.ok strong { color: var(--green); }
+.fb.ko strong { color: var(--bad); }
+.fb p { margin: 4px 0 0; text-wrap: pretty; }
+
+/* Results */
+.result { background: var(--surface); border: 2px solid var(--line); border-radius: 14px; padding: 24px 20px; display: flex; flex-direction: column; gap: 14px; }
+.score { font-family: var(--display); font-weight: 800; font-size: 56px; line-height: 1; font-variant-numeric: tabular-nums; }
+.score small { font-size: 26px; color: var(--muted); }
+.result h2 { font-family: var(--display); font-size: 22px; margin: 0; }
+.result p { margin: 0; color: var(--muted); }
+.miss { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.miss li { border-left: 4px solid var(--bad); padding: 4px 0 4px 12px; }
+.miss b { display: block; }
+.miss span { color: var(--muted); font-size: 15px; }
+.tally { display: flex; gap: 18px; flex-wrap: wrap; font-family: var(--display); font-weight: 700; }
+.tally .k { color: var(--green); }
+.tally .r { color: var(--bad); }
+.best { font-size: 14px; color: var(--muted); }
+
+@media (prefers-reduced-motion: reduce) {
+  .card-inner, .bar > i { transition: none; }
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">SVT · 4ème · 2026/2027</div>
+    <h1>Chapitre 1 : le développement des végétaux</h1>
+    <p class="lead">10 flashcards pour apprendre les phrases à retenir, puis 10 QCM pour vérifier que tout est compris.</p>
+    <span class="legend"><span class="dot" aria-hidden="true"></span>Le rouge, comme dans le cours, marque ce qu’il faut retenir.</span>
+  </header>
+
+  <div class="tabs" role="tablist" aria-label="Mode de révision">
+    <button class="tab" role="tab" id="tab-flash" aria-selected="true" aria-controls="panel-flash">Flashcards</button>
+    <button class="tab" role="tab" id="tab-qcm" aria-selected="false" aria-controls="panel-qcm">QCM</button>
+  </div>
+
+  <section id="panel-flash" role="tabpanel" aria-labelledby="tab-flash" style="display:flex;flex-direction:column;gap:18px"></section>
+  <section id="panel-qcm" role="tabpanel" aria-labelledby="tab-qcm" style="display:flex;flex-direction:column;gap:18px" hidden></section>
+</div>
+
+<script>
+(function () {
+  var CARDS = [
+    { tag: "I · Les besoins des végétaux",
+      q: "D’après les expériences, de quoi la plante a-t-elle besoin pour se développer ?",
+      a: "La plante a besoin <b>d’eau</b>, <b>de lumière</b>, <b>de sels minéraux</b> et <b>de dioxyde de carbone</b> pour se développer." },
+    { tag: "II · Les nutriments dans les végétaux",
+      q: "Que stockent les plantes, et où ?",
+      a: "Les plantes <b>stockent de la matière organique</b> <span class='ex'>(protéines, lipides, glucides)</span> à l’<b>intérieur des cellules</b> de certains de leurs organes <span class='ex'>(graines, tubercules, fruits)</span>." },
+    { tag: "III · L’origine de la matière organique",
+      q: "Que permettent les associations symbiotiques pour une plante ?",
+      a: "Des <b>associations symbiotiques</b> <span class='ex'>(plantes avec champignons ou bactéries)</span> permettent aux végétaux d’<b>améliorer l’absorption d’eau et de sels minéraux</b> par les racines." },
+    { tag: "III · L’origine de la matière organique",
+      q: "Quel est le rôle des feuilles ?",
+      a: "<b>Production de glucides à la lumière</b> = <b>photosynthèse</b>. Lieu d’<b>échange de gaz</b> (O₂ et CO₂) par les <b>stomates</b> : respiration / photosynthèse." },
+    { tag: "III · L’origine de la matière organique",
+      q: "Quel est le rôle des racines ?",
+      a: "<b>Prélèvement de matière minérale</b> (eau + sels minéraux) + <b>symbiose</b>." },
+    { tag: "III · L’origine de la matière organique",
+      q: "Que transporte la sève brute, et dans quelle direction ?",
+      a: "Circulation de <b>sève brute</b> (<b>eau + sels minéraux</b>) <b>vers les feuilles</b>, dans la tige." },
+    { tag: "III · L’origine de la matière organique",
+      q: "Que transporte la sève élaborée, et où ?",
+      a: "Circulation de <b>sève élaborée</b> (<b>glucides</b>) <b>dans toute la plante</b>." },
+    { tag: "III · L’origine de la matière organique",
+      q: "Que font les cellules des feuilles de la matière minérale et de la lumière ? Comment appelle-t-on ce phénomène ?",
+      a: "Les cellules des feuilles utilisent la <b>matière minérale</b> : <b>eau, sels minéraux, dioxyde de carbone</b> et l’<b>énergie lumineuse</b> pour produire leur <b>propre matière organique</b> : c’est la <b>photosynthèse</b>.<br>CO₂ + sels minéraux + eau → glucides + O₂ (avec la lumière)" },
+    { tag: "Utilisation de la matière organique",
+      q: "Comment la plante utilise-t-elle les glucides fabriqués par photosynthèse ? Donne l’équation.",
+      a: "Les glucides fabriqués par photosynthèse sont utilisés lors de la <b>respiration cellulaire</b> :<br><b>dioxygène + glucides → énergie + CO₂</b>" },
+    { tag: "Utilisation de la matière organique",
+      q: "Que peut faire d’autre la plante des glucides qu’elle a fabriqués ?",
+      a: "Ils peuvent aussi être <b>stockés</b> ou utilisés pour la <b>croissance</b> de la plante." }
+  ];
+
+  var QCM = [
+    { q: "D’après les expériences, la plante a besoin pour se développer :",
+      o: ["D’eau, de lumière, de sels minéraux et de dioxyde de carbone", "D’eau, de lumière et de terre uniquement", "De dioxygène, de vent et de chaleur", "De sucre, d’eau et de dioxygène"], c: 0,
+      e: "Les plantes témoins grandissent. Sans eau ou sans lumière la plante meurt. Sans sels minéraux ou sans dioxyde de carbone elle ne grandit pas." },
+    { q: "Quel colorant permet d’observer l’amidon dans les cellules de pomme de terre au microscope ?",
+      o: ["Le bleu de méthylène", "L’eau iodée", "L’encre rouge", "L’eau de chaux"], c: 1,
+      e: "Les cellules de pomme de terre colorées à l’eau iodée montrent l’amidon (les nutriments) à l’intérieur de la membrane des cellules." },
+    { q: "Au printemps, que deviennent les réserves de nutriments des cellules de la pomme de terre ?",
+      o: ["Elles augmentent", "Elles restent identiques", "Elles s’épuisent, car elles servent à la croissance du pied de pomme de terre", "Elles sortent par les stomates"], c: 2,
+      e: "Les glucides stockés en été sont utilisés au printemps pour la croissance du pied (feuilles, tiges, racines)." },
+    { q: "Un stomate est :",
+      o: ["Une ouverture formée par 2 cellules qui permet les échanges gazeux avec l’atmosphère", "Un poil situé sur la racine", "Un vaisseau qui transporte la sève", "Un organe de stockage de l’amidon"], c: 0,
+      e: "Plus les stomates sont ouverts, plus la plante incorpore de CO₂." },
+    { q: "À l’obscurité, que se passe-t-il pour le dioxygène (O₂) et le dioxyde de carbone (CO₂) autour d’une plante ?",
+      o: ["L’O₂ augmente et le CO₂ diminue", "L’O₂ diminue et le CO₂ augmente", "L’O₂ et le CO₂ diminuent tous les deux", "Rien ne change"], c: 1,
+      e: "À l’obscurité la plante respire : elle consomme de l’O₂ et rejette du CO₂." },
+    { q: "La sève brute est composée :",
+      o: ["De glucides et d’eau", "De glucides uniquement", "Presque uniquement d’eau et de sels minéraux, sans glucides", "De dioxygène et de dioxyde de carbone"], c: 2,
+      e: "La sève brute circule vers les feuilles. La sève élaborée, elle, transporte les glucides dans toute la plante." },
+    { q: "Les poils absorbants sont :",
+      o: ["Des cellules particulières de l’épiderme des racines", "Des cellules des feuilles", "Des vaisseaux conducteurs de la tige", "Des cellules du tubercule qui stockent l’amidon"], c: 0,
+      e: "Dans l’expérience, la zone pilifère en contact avec l’eau absorbe l’eau, alors qu’elle est isolée de l’eau par l’huile dans le tube B." },
+    { q: "Les plantules avec mycorhize, par rapport à celles sans mycorhize, ont après 15 jours :",
+      o: ["Une taille et une masse plus petites", "La même taille mais une masse plus grande", "Une taille plus grande mais une masse plus petite", "Une taille et une masse plus grandes"], c: 3,
+      e: "En moyenne 51,03 cm contre 42,46 cm, et 37,13 g contre 32,06 g : la plante pousse mieux avec mycorhize." },
+    { q: "Que produit la photosynthèse dans les cellules des feuilles ?",
+      o: ["Des glucides et du dioxygène", "De l’énergie et du dioxyde de carbone", "De l’eau et des sels minéraux", "De la lumière"], c: 0,
+      e: "La photosynthèse utilise l’eau, les sels minéraux, le dioxyde de carbone et la lumière pour produire de la matière organique (glucides) et du dioxygène." },
+    { q: "Lors de la respiration cellulaire, la plante :",
+      o: ["Consomme du dioxyde de carbone et produit des glucides", "Consomme du dioxygène et des glucides, et libère de l’énergie et du dioxyde de carbone", "Consomme de l’énergie et libère du dioxygène", "Consomme de l’eau et de la lumière"], c: 1,
+      e: "Dioxygène + glucides → énergie + dioxyde de carbone. L’énergie sert au fonctionnement et à la croissance de la plante." }
+  ];
+
+  var $ = function (id) { return document.getElementById(id); };
+  var LETTERS = ["A", "B", "C", "D"];
+
+  /* ---------- Tabs ---------- */
+  var tabs = { flash: $("tab-flash"), qcm: $("tab-qcm") };
+  var panels = { flash: $("panel-flash"), qcm: $("panel-qcm") };
+  var current = "flash";
+  function showTab(name) {
+    current = name;
+    Object.keys(tabs).forEach(function (k) {
+      tabs[k].setAttribute("aria-selected", String(k === name));
+      panels[k].hidden = k !== name;
+    });
+  }
+  tabs.flash.addEventListener("click", function () { showTab("flash"); });
+  tabs.qcm.addEventListener("click", function () { showTab("qcm"); });
+
+  /* ---------- Flashcards ---------- */
+  var deck = [], pos = 0, status = {}, flipped = false;
+  var fp = panels.flash;
+
+  function startDeck(indexes) {
+    deck = indexes.slice(); pos = 0; flipped = false;
+    if (indexes.length === CARDS.length) status = {};
+    renderFlash();
+  }
+
+  function renderFlash() {
+    if (pos >= deck.length) { renderFlashEnd(); return; }
+    var c = CARDS[deck[pos]];
+    fp.innerHTML =
+      '<div class="meter"><span>Carte ' + (pos + 1) + ' / ' + deck.length + '</span><div class="bar"><i style="width:' + (pos / deck.length * 100) + '%"></i></div></div>' +
+      '<button class="card" id="card" aria-label="Carte de révision. Touche pour retourner.">' +
+        '<span class="card-inner">' +
+          '<span class="face front"><span class="tag">' + c.tag + '</span><span class="label">Question</span><span class="txt">' + c.q + '</span><span class="hint">Touche la carte pour voir la réponse</span></span>' +
+          '<span class="face back" aria-hidden="true"><span class="tag">' + c.tag + '</span><span class="label"><span class="dot" aria-hidden="true"></span>À retenir</span><span class="txt">' + c.a + '</span><span class="hint">Touche pour revenir à la question</span></span>' +
+        '</span>' +
+      '</button>' +
+      '<div class="row" id="fnav"></div>';
+    var card = $("card");
+    card.addEventListener("click", function () { flip(); });
+    drawFlashButtons();
+  }
+
+  function flip() {
+    flipped = !flipped;
+    var card = $("card"); if (!card) return;
+    card.classList.toggle("flipped", flipped);
+    var back = card.querySelector(".back"), front = card.querySelector(".front");
+    back.setAttribute("aria-hidden", String(!flipped));
+    front.setAttribute("aria-hidden", String(flipped));
+    drawFlashButtons();
+  }
+
+  function drawFlashButtons() {
+    var nav = $("fnav"); if (!nav) return;
+    if (!flipped) {
+      nav.innerHTML =
+        '<button class="btn" id="fprev"' + (pos === 0 ? " disabled" : "") + '>← Précédente</button>' +
+        '<span class="spacer"></span>' +
+        '<button class="btn primary" id="fflip">Voir la réponse</button>';
+      $("fflip").addEventListener("click", flip);
+    } else {
+      nav.innerHTML =
+        '<button class="btn" id="fprev"' + (pos === 0 ? " disabled" : "") + '>← Précédente</button>' +
+        '<button class="btn review grow" id="frev">À revoir</button>' +
+        '<button class="btn known grow" id="fknown">Je savais</button>';
+      $("frev").addEventListener("click", function () { mark("review"); });
+      $("fknown").addEventListener("click", function () { mark("known"); });
+    }
+    $("fprev").addEventListener("click", function () { goTo(pos - 1); });
+  }
+
+  function mark(s) { status[deck[pos]] = s; goTo(pos + 1); }
+
+  function goTo(n) {
+    if (n < 0) return;
+    flipped = false;
+    pos = n;
+    if (pos >= deck.length) { renderFlashEnd(); return; }
+    renderFlash();
+  }
+
+  function renderFlashEnd() {
+    var known = 0, review = [];
+    deck.forEach(function (i) { if (status[i] === "known") known++; else review.push(i); });
+    var msg = review.length === 0
+      ? "Toutes les cartes sont sues. Passe au QCM pour tester la compréhension."
+      : "Refais les cartes à revoir jusqu’à les connaître, puis passe au QCM.";
+    fp.innerHTML =
+      '<div class="result">' +
+        '<h2>Tour terminé</h2>' +
+        '<div class="tally"><span class="k">' + known + ' sues</span><span class="r">' + review.length + ' à revoir</span></div>' +
+        '<p>' + msg + '</p>' +
+        '<div class="row">' +
+          (review.length ? '<button class="btn primary" id="fredo">Refaire les cartes à revoir</button>' : '') +
+          '<button class="btn' + (review.length ? '' : ' primary') + '" id="fall">Tout recommencer</button>' +
+          '<button class="btn" id="fgoqcm">Aller au QCM</button>' +
+        '</div>' +
+      '</div>';
+    if (review.length) $("fredo").addEventListener("click", function () {
+      deck = review.slice(); pos = 0; flipped = false; renderFlash();
+    });
+    $("fall").addEventListener("click", function () { startDeck(CARDS.map(function (_, i) { return i; })); });
+    $("fgoqcm").addEventListener("click", function () { showTab("qcm"); });
+  }
+
+  /* ---------- QCM ---------- */
+  var qi = 0, score = 0, wrong = [], answered = false, order = [];
+  var qp = panels.qcm;
+
+  function shuffle(a) {
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function startQcm() { qi = 0; score = 0; wrong = []; renderQ(); }
+
+  function renderQ() {
+    answered = false;
+    var item = QCM[qi];
+    order = shuffle(item.o.map(function (_, i) { return i; }));
+    var html =
+      '<div class="meter"><span>Question ' + (qi + 1) + ' / ' + QCM.length + '</span><div class="bar"><i style="width:' + (qi / QCM.length * 100) + '%"></i></div></div>' +
+      '<h2 class="q">' + item.q + '</h2><ul class="opts">';
+    order.forEach(function (oi, k) {
+      html += '<li><button class="opt" data-k="' + k + '"><span class="ltr">' + LETTERS[k] + '</span><span class="t">' + item.o[oi] + '</span></button></li>';
+    });
+    html += '</ul><div id="fb" aria-live="polite"></div><div class="row" id="qnav"></div>';
+    qp.innerHTML = html;
+    var btns = qp.querySelectorAll(".opt");
+    Array.prototype.forEach.call(btns, function (b) {
+      b.addEventListener("click", function () { answer(parseInt(b.getAttribute("data-k"), 10)); });
+    });
+  }
+
+  function answer(k) {
+    if (answered) return; answered = true;
+    var item = QCM[qi];
+    var ok = order[k] === item.c;
+    if (ok) score++; else wrong.push(qi);
+    var btns = qp.querySelectorAll(".opt");
+    Array.prototype.forEach.call(btns, function (b, idx) {
+      b.disabled = true;
+      if (order[idx] === item.c) b.classList.add("right");
+      else if (idx === k) b.classList.add("wrong");
+      else b.classList.add("dim");
+    });
+    $("fb").innerHTML = '<div class="fb ' + (ok ? "ok" : "ko") + '"><strong>' + (ok ? "Bonne réponse." : "Pas tout à fait.") + '</strong><p>' + item.e + '</p></div>';
+    var last = qi === QCM.length - 1;
+    $("qnav").innerHTML = '<span class="spacer"></span><button class="btn primary" id="qnext">' + (last ? "Voir mon score" : "Question suivante →") + '</button>';
+    var nx = $("qnext");
+    nx.addEventListener("click", function () { qi++; if (qi >= QCM.length) renderResult(); else renderQ(); });
+    nx.focus();
+  }
+
+  function bestScore(newScore) {
+    var best = null;
+    try {
+      var v = localStorage.getItem("svt-vegetaux-best");
+      best = v === null ? null : parseInt(v, 10);
+      if (best === null || isNaN(best) || newScore > best) { best = newScore; localStorage.setItem("svt-vegetaux-best", String(best)); }
+    } catch (e) { best = null; }
+    return best;
+  }
+
+  function renderResult() {
+    var msg = score === 10 ? "Sans faute. Tu es prêt pour l’évaluation."
+      : score >= 8 ? "Très bien. Relis les points manqués ci-dessous."
+      : score >= 5 ? "C’est un bon début. Reprends les flashcards sur les points manqués."
+      : "Reprends les flashcards, puis refais le QCM.";
+    var best = bestScore(score);
+    var html = '<div class="result"><div class="score">' + score + '<small> / ' + QCM.length + '</small></div><h2>' + msg + '</h2>';
+    if (best !== null) html += '<div class="best">Meilleur score sur cet appareil : ' + best + ' / ' + QCM.length + '</div>';
+    if (wrong.length) {
+      html += '<p>À revoir :</p><ul class="miss">';
+      wrong.forEach(function (i) { html += '<li><b>' + QCM[i].q + '</b><span>' + QCM[i].o[QCM[i].c] + '</span></li>'; });
+      html += '</ul>';
+    }
+    html += '<div class="row"><button class="btn primary" id="qagain">Refaire le QCM</button><button class="btn" id="qtocards">Revoir les flashcards</button></div></div>';
+    qp.innerHTML = html;
+    $("qagain").addEventListener("click", startQcm);
+    $("qtocards").addEventListener("click", function () { showTab("flash"); });
+  }
+
+  /* ---------- Keyboard ---------- */
+  document.addEventListener("keydown", function (e) {
+    if (current !== "flash" || pos >= deck.length) return;
+    if (e.key === "ArrowRight") { if (!flipped) flip(); else mark("known"); }
+    else if (e.key === "ArrowLeft") { goTo(pos - 1); }
+  });
+
+  startDeck(CARDS.map(function (_, i) { return i; }));
+  startQcm();
+})();
+</script>
+
+</body></html>
