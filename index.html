@@ -40,6 +40,11 @@
     color: #64748b;
     font-size: 0.95rem;
   }
+  #compteur {
+    margin: 0 0 1.4rem;
+    color: #64748b;
+    font-size: 0.85rem;
+  }
   a.bouton-publier {
     background: var(--bleu);
     color: #fff;
@@ -98,6 +103,19 @@
     font-size: 0.82rem;
     color: #64748b;
   }
+  .badge-nouveau {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    background: #dcfce7;
+    color: #166534;
+    padding: 0.1rem 0.4rem;
+    border-radius: 999px;
+    margin-left: 0.4rem;
+    vertical-align: middle;
+  }
   .vide {
     text-align: center;
     color: #94a3b8;
@@ -127,6 +145,7 @@
     </select>
   </div>
 
+  <p id="compteur"></p>
   <div id="contenu"></div>
 </div>
 
@@ -138,12 +157,21 @@ function normaliser(texte) {
   return texte.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 }
 
+const SEPT_JOURS_EN_MS = 7 * 24 * 60 * 60 * 1000;
+
+function estNouveau(q) {
+  if (!q.date) return false;
+  return Date.now() - new Date(q.date).getTime() <= SEPT_JOURS_EN_MS;
+}
+
 function afficher() {
   const recherche = normaliser(document.getElementById("recherche").value.trim());
   const niveauFiltre = document.getElementById("filtre-niveau").value;
   const conteneur = document.getElementById("contenu");
+  const compteur = document.getElementById("compteur");
 
   const filtres = tousLesQcm.filter((q) => {
+    if (q.archive) return false;
     const correspondNiveau = !niveauFiltre || q.niveau === niveauFiltre;
     const correspondRecherche =
       !recherche ||
@@ -153,20 +181,31 @@ function afficher() {
   });
 
   if (filtres.length === 0) {
+    compteur.textContent = "";
     conteneur.innerHTML = `<p class="vide">Aucun QCM ne correspond pour l'instant.</p>`;
     return;
   }
 
+  // Comptage par niveau, calculé sur l'ensemble filtré par la recherche
+  // mais avant le filtre de niveau, pour que le compteur reste informatif
+  // même quand un niveau précis est sélectionné.
+  const detailParNiveau = ORDRE_NIVEAUX
+    .map((n) => `${filtres.filter((q) => q.niveau === n).length} en ${n}`)
+    .join(" · ");
+  compteur.textContent = `${filtres.length} QCM — ${detailParNiveau}`;
+
   let html = "";
   for (const niveau of ORDRE_NIVEAUX) {
-    const qcmDuNiveau = filtres.filter((q) => q.niveau === niveau);
+    const qcmDuNiveau = filtres
+      .filter((q) => q.niveau === niveau)
+      .sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
     if (qcmDuNiveau.length === 0) continue;
 
     html += `<section class="groupe-niveau"><h2>${niveau}</h2><div class="liste-qcm">`;
     for (const q of qcmDuNiveau) {
       html += `
         <a class="carte-qcm" href="${q.chemin}">
-          <div class="titre-qcm">${q.titre}</div>
+          <div class="titre-qcm">${q.titre}${estNouveau(q) ? '<span class="badge-nouveau">Nouveau</span>' : ""}</div>
           <div class="domaine-qcm">${q.domaine}</div>
         </a>`;
     }
