@@ -221,14 +221,29 @@ champSlug.addEventListener("input", () => {
   mettreAJourApercu();
 });
 
-champNiveau.addEventListener("change", mettreAJourApercu);
+// Suggestions de thèmes déjà utilisés, filtrées par niveau pour ne pas
+// mélanger par exemple les thèmes de 3e quand on publie pour des 6e.
+let catalogueComplet = [];
 
-// Suggestions de thèmes déjà utilisés, pour limiter les doublons par coquille.
+function mettreAJourSuggestionsDomaines() {
+  const niveau = champNiveau.value;
+  const correspondants = niveau
+    ? catalogueComplet.filter((q) => q.niveau === niveau)
+    : catalogueComplet;
+  const domaines = [...new Set(correspondants.map((q) => q.domaine))];
+  listeDomaines.innerHTML = domaines.map((d) => `<option value="${d}">`).join("");
+}
+
+champNiveau.addEventListener("change", () => {
+  mettreAJourApercu();
+  mettreAJourSuggestionsDomaines();
+});
+
 fetch("/data/index.json")
   .then((r) => r.json())
   .then((liste) => {
-    const domaines = [...new Set(liste.map((q) => q.domaine))];
-    listeDomaines.innerHTML = domaines.map((d) => `<option value="${d}">`).join("");
+    catalogueComplet = liste;
+    mettreAJourSuggestionsDomaines();
   })
   .catch(() => {});
 
@@ -245,11 +260,30 @@ document.getElementById("formulaire").addEventListener("submit", async (e) => {
   const fichier = champFichier.files[0];
   if (!fichier) return;
 
+  // Contrôle rapide avant l'envoi : un fichier vide, trop petit, ou qui ne
+  // ressemble pas à du HTML signale presque toujours une erreur de dépôt
+  // (mauvais fichier, export incomplet…).
+  if (fichier.size < 50) {
+    afficherStatut("erreur", "Ce fichier semble vide ou trop petit pour être un QCM. Vérifie que c'est le bon fichier.");
+    return;
+  }
+  if (fichier.size > 2 * 1024 * 1024) {
+    afficherStatut("erreur", "Ce fichier dépasse 2 Mo, ce qui est inhabituel pour un QCM HTML. Vérifie que c'est le bon fichier.");
+    return;
+  }
+
   bouton.disabled = true;
   bouton.textContent = "Publication en cours…";
 
   try {
     const htmlContent = await fichier.text();
+
+    if (!/<html[\s>]/i.test(htmlContent) && !/<!doctype html/i.test(htmlContent)) {
+      afficherStatut("erreur", "Ce fichier ne ressemble pas à une page HTML valide (balise &lt;html&gt; introuvable). Vérifie le fichier déposé.");
+      bouton.disabled = false;
+      bouton.textContent = "Publier";
+      return;
+    }
 
     const reponseServeur = await fetch("/.netlify/functions/publier", {
       method: "POST",
