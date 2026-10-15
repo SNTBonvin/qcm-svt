@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gérer les QCM</title>
+<style>
+  :root {
+    --bleu: #2563eb;
+    --gris-fond: #f8fafc;
+    --gris-bordure: #e2e8f0;
+    --gris-texte: #334155;
+    --vert: #16a34a;
+    --rouge: #dc2626;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--gris-fond);
+    color: var(--gris-texte);
+    margin: 0;
+    padding: 2rem 1rem 4rem;
+  }
+  .conteneur { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 1.5rem; margin: 0 0 0.3rem; }
+  p.sous-titre { margin: 0 0 1.6rem; color: #64748b; font-size: 0.95rem; }
+
+  label.case-archives {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    margin-bottom: 1.4rem;
+    cursor: pointer;
+  }
+
+  .ligne-qcm {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    background: #fff;
+    border: 1px solid var(--gris-bordure);
+    border-radius: 10px;
+    padding: 0.9rem 1.1rem;
+    margin-bottom: 0.7rem;
+    flex-wrap: wrap;
+  }
+  .ligne-qcm.est-archive { opacity: 0.6; }
+  .info-qcm { flex: 1; min-width: 200px; }
+  .info-qcm .titre { font-weight: 600; font-size: 0.95rem; }
+  .info-qcm .meta { font-size: 0.82rem; color: #64748b; margin-top: 0.15rem; }
+  .badge-archive {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    background: #f1f5f9;
+    color: #64748b;
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    margin-left: 0.4rem;
+  }
+
+  .actions-qcm { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  button {
+    border: 1px solid var(--gris-bordure);
+    background: #fff;
+    padding: 0.45rem 0.8rem;
+    border-radius: 7px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  button:disabled { opacity: 0.5; cursor: wait; }
+  button.archiver { color: #92400e; }
+  button.archiver:hover { background: #fffbeb; border-color: #fcd34d; }
+  button.desarchiver { color: var(--vert); }
+  button.desarchiver:hover { background: #f0fdf4; border-color: #86efac; }
+  button.remplacer { color: var(--bleu); }
+  button.remplacer:hover { background: #eff6ff; border-color: #93c5fd; }
+  button.supprimer { color: var(--rouge); }
+  button.supprimer:hover { background: #fef2f2; border-color: #fecaca; }
+
+  .vide { text-align: center; color: #94a3b8; padding: 3rem 1rem; font-size: 0.95rem; }
+  #statut-global {
+    margin-bottom: 1rem;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    display: none;
+  }
+  #statut-global.erreur { display: block; background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+  a.retour { display: inline-block; margin-top: 1.5rem; font-size: 0.88rem; color: #64748b; text-decoration: none; }
+  a.retour:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="conteneur">
+  <h1>Gérer les QCM</h1>
+  <p class="sous-titre">Archive ou supprime un QCM du catalogue.</p>
+
+  <label class="case-archives">
+    <input type="checkbox" id="afficher-archives">
+    Afficher aussi les QCM archivés
+  </label>
+
+  <div id="statut-global"></div>
+  <div id="liste"></div>
+
+  <a class="retour" href="/">← Retour au catalogue</a>
+</div>
+
+<script>
+let tousLesQcm = [];
+
+function afficherStatut(message) {
+  const el = document.getElementById("statut-global");
+  if (!message) { el.style.display = "none"; return; }
+  el.className = "erreur";
+  el.textContent = message;
+}
+
+function rendreListe() {
+  const afficherArchives = document.getElementById("afficher-archives").checked;
+  const conteneur = document.getElementById("liste");
+
+  const items = tousLesQcm.filter((q) => afficherArchives || !q.archive);
+
+  if (items.length === 0) {
+    conteneur.innerHTML = `<p class="vide">Aucun QCM à afficher.</p>`;
+    return;
+  }
+
+  conteneur.innerHTML = "";
+  for (const q of items) {
+    const ligne = document.createElement("div");
+    ligne.className = "ligne-qcm" + (q.archive ? " est-archive" : "");
+    ligne.innerHTML = `
+      <div class="info-qcm">
+        <div class="titre">${q.titre}${q.archive ? '<span class="badge-archive">archivé</span>' : ""}</div>
+        <div class="meta">${q.niveau} · ${q.domaine}</div>
+      </div>
+      <div class="actions-qcm">
+        <a href="${q.chemin}" target="_blank"><button type="button">Voir</button></a>
+        ${q.archive
+          ? `<button type="button" class="desarchiver">Désarchiver</button>`
+          : `<button type="button" class="archiver">Archiver</button>`
+        }
+        <button type="button" class="remplacer">Remplacer le fichier</button>
+        <input type="file" class="fichier-remplacement hidden" accept=".html,.htm" style="display:none">
+        <button type="button" class="supprimer">Supprimer</button>
+      </div>
+    `;
+
+    const boutonArchiverOuDesarchiver = ligne.querySelector(q.archive ? ".desarchiver" : ".archiver");
+    boutonArchiverOuDesarchiver.addEventListener("click", () => {
+      executerAction(q.archive ? "desarchiver" : "archiver", q, ligne);
+    });
+
+    const champFichierRemplacement = ligne.querySelector(".fichier-remplacement");
+    ligne.querySelector(".remplacer").addEventListener("click", () => {
+      champFichierRemplacement.click();
+    });
+    champFichierRemplacement.addEventListener("change", async () => {
+      const fichier = champFichierRemplacement.files[0];
+      if (!fichier) return;
+
+      const confirmation = confirm(
+        `Remplacer le fichier de « ${q.titre} » par « ${fichier.name} » ?\n\nLe lien du QCM ne change pas.`
+      );
+      champFichierRemplacement.value = "";
+      if (!confirmation) return;
+
+      const htmlContent = await fichier.text();
+      if (!/<html[\s>]/i.test(htmlContent) && !/<!doctype html/i.test(htmlContent)) {
+        afficherStatut("Ce fichier ne ressemble pas à une page HTML valide. Vérifie le fichier choisi.");
+        return;
+      }
+      executerAction("remplacer", q, ligne, { htmlContent });
+    });
+
+    ligne.querySelector(".supprimer").addEventListener("click", () => {
+      const confirmation = confirm(
+        `Supprimer définitivement « ${q.titre} » ?\n\nCette action est irréversible : le fichier et le lien seront supprimés.`
+      );
+      if (confirmation) executerAction("supprimer", q, ligne);
+    });
+
+    conteneur.appendChild(ligne);
+  }
+}
+
+async function executerAction(action, q, ligne, donneesSupplementaires = {}) {
+  afficherStatut("");
+  const boutons = ligne.querySelectorAll("button");
+  boutons.forEach((b) => (b.disabled = true));
+
+  try {
+    const res = await fetch("/.netlify/functions/gerer", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action, niveau: q.niveau, slug: q.slug, ...donneesSupplementaires }),
+    });
+    const resultat = await res.json();
+
+    if (!res.ok) {
+      afficherStatut(resultat.erreur || "Une erreur est survenue.");
+      boutons.forEach((b) => (b.disabled = false));
+      return;
+    }
+
+    await chargerCatalogue();
+  } catch (err) {
+    afficherStatut("Impossible de contacter le serveur. Vérifie ta connexion et réessaie.");
+    boutons.forEach((b) => (b.disabled = false));
+  }
+}
+
+async function chargerCatalogue() {
+  const res = await fetch("/data/index.json", { cache: "no-store" });
+  tousLesQcm = await res.json();
+  rendreListe();
+}
+
+document.getElementById("afficher-archives").addEventListener("change", rendreListe);
+chargerCatalogue();
+</script>
+</body>
+</html>
