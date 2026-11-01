@@ -235,7 +235,7 @@ const html=ACTS.map((a,i)=>{
   const label=a.bilan?"Bilan":"Document "+a.n;
   return `<section class="act" id="act${i}"><header><span class="tag">${label}</span><h2>Activité ${a.n} · ${a.title}</h2><span class="score" id="sc${i}"></span></header>
   <div class="grid"><figure class="doc"><div class="frame"><img src="${IMG[a.img]}" alt="${esc(a.alt)}">${pins}</div><figcaption>${a.cap}</figcaption></figure>
-  <div class="qs">${qs}<div class="bar"><button class="btn main" type="button" data-act="check" data-i="${i}">Vérifier mes réponses</button><button class="btn" type="button" data-act="reveal" data-i="${i}" hidden>Afficher les réponses</button><span class="msg" id="ms${i}" role="status"></span></div>
+  <div class="qs">${qs}<div class="bar"><button class="btn main" type="button" data-act="check" data-i="${i}">Vérifier mes réponses</button><span class="msg" id="ms${i}" role="status"></span></div>
   ${a.model?`<div class="model" id="mod${i}" hidden><b>Exemple de conclusion</b>${a.model}</div>`:""}</div></div></section>`;
 }).join("");
 document.getElementById("acts").innerHTML=html;
@@ -275,14 +275,8 @@ function checkAct(i){
   s.className="score "+(good===tot?"good":good/tot>=.5?"mid":"bad");
   const ms=document.getElementById("ms"+i);
   ms.textContent=good===tot?"Bravo, tout est juste.":empty?`${empty} réponse${empty>1?"s":""} à compléter.`:"Relis les aides en jaune et corrige les réponses marquées ✗.";
-  document.querySelector(`[data-act="reveal"][data-i="${i}"]`).hidden=good===tot;
   const m=document.getElementById("mod"+i);if(m)m.hidden=false;
   update();
-}
-function revealAct(i){
-  const a=ACTS[i];
-  a.ids.forEach(id=>{const f=F[id];setVal(id,f.t==="num"?String(f.show):f.ans)});
-  checkAct(i);
 }
 function update(){
   const done=Object.keys(CHK).length;
@@ -310,7 +304,6 @@ document.addEventListener("click",e=>{
   const b=e.target.closest("[data-act]");if(!b)return;
   const i=+b.dataset.i;
   if(b.dataset.act==="check")checkAct(i);
-  if(b.dataset.act==="reveal")revealAct(i);
 });
 document.getElementById("copy").addEventListener("click",()=>{
   const lines=["Zone de subduction – résultat"];
