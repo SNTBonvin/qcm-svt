@@ -73,5 +73,13 @@
     "slug": "zone-1-adaptee",
     "chemin": "/qcm/3e/zone-1-adaptee/",
     "date": "2026-11-01T19:22:19.168Z"
+  },
+  {
+    "titre": "Zone 2 adaptée",
+    "domaine": "La planète Terre",
+    "niveau": "3e",
+    "slug": "zone-2-adaptee",
+    "chemin": "/qcm/3e/zone-2-adaptee/",
+    "date": "2026-11-01T19:24:05.731Z"
   }
 ]
