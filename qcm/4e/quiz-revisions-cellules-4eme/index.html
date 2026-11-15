@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Des cellules au phénotype — Quiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1b2459;
+    --violet:#5b3fd1;
+    --violet-dark:#4530a8;
+    --bg:#eef0fb;
+    --bg-deep:#dbdff2;
+    --gold:#b5892b;
+    --rose:#b23a52;
+    --ink:#1b2459;
+    --paper:#fbfbfe;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    background-image:
+      radial-gradient(circle at 8% 10%, rgba(91,63,209,0.09), transparent 42%),
+      radial-gradient(circle at 92% 88%, rgba(178,58,82,0.08), transparent 46%);
+    font-family:"Source Sans 3", sans-serif;
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding:48px 20px;
+  }
+  .wrap{
+    width:100%;
+    max-width:640px;
+  }
+  header.top{
+    margin-bottom:28px;
+  }
+  .kicker{
+    font-size:14px;
+    color:var(--violet-dark);
+    letter-spacing:0.02em;
+  }
+  h1{
+    font-family:"Fraunces", serif;
+    font-weight:700;
+    font-size:32px;
+    line-height:1.15;
+    margin:10px 0 6px 0;
+    color:var(--navy);
+  }
+  .subtitle{
+    font-size:16px;
+    color:#52588a;
+    margin:0;
+    max-width:52ch;
+  }
+  .progress-track{
+    height:6px;
+    border-radius:4px;
+    background:var(--bg-deep);
+    overflow:hidden;
+    margin-top:22px;
+  }
+  .progress-fill{
+    height:100%;
+    background:var(--violet);
+    border-radius:4px;
+    transition:width .35s ease;
+    width:0%;
+  }
+  .card{
+    background:var(--paper);
+    border:1px solid #d7d9ef;
+    border-radius:14px;
+    padding:32px 30px;
+    box-shadow:0 1px 0 rgba(27,36,89,0.03);
+  }
+  .qnum{
+    font-family:"Fraunces", serif;
+    font-size:15px;
+    color:var(--gold);
+    font-weight:600;
+    margin-bottom:10px;
+  }
+  .prompt{
+    font-family:"Fraunces", serif;
+    font-size:22px;
+    line-height:1.35;
+    font-weight:600;
+    color:var(--navy);
+    margin:0 0 24px 0;
+  }
+  .options{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .option{
+    text-align:left;
+    background:#fff;
+    border:1.5px solid #d3d6ec;
+    border-radius:10px;
+    padding:14px 16px;
+    font-family:inherit;
+    font-size:16px;
+    color:var(--ink);
+    cursor:pointer;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .option:hover:not(:disabled){
+    border-color:var(--violet);
+    background:#fcfbff;
+  }
+  .option:disabled{
+    cursor:default;
+  }
+  .option.correct{
+    border-color:#1f8a72;
+    background:#e5f5f0;
+    color:#136651;
+    font-weight:600;
+  }
+  .option.incorrect{
+    border-color:var(--rose);
+    background:#f8e9ec;
+    color:var(--rose);
+  }
+  .feedback{
+    margin-top:20px;
+    padding:16px 18px;
+    border-radius:10px;
+    background:var(--bg-deep);
+    font-size:15px;
+    line-height:1.55;
+    display:none;
+  }
+  .feedback.show{display:block;}
+  .feedback .verdict{
+    font-weight:700;
+    display:block;
+    margin-bottom:4px;
+  }
+  .feedback.good .verdict{color:#136651;}
+  .feedback.bad .verdict{color:var(--rose);}
+  .actions{
+    margin-top:24px;
+    display:flex;
+    justify-content:flex-end;
+  }
+  button.next{
+    background:var(--navy);
+    color:var(--paper);
+    border:none;
+    padding:12px 22px;
+    border-radius:8px;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    display:none;
+  }
+  button.next.show{display:inline-block;}
+  button.next:hover{background:var(--violet-dark);}
+
+  .result{
+    text-align:center;
+    padding:12px 6px 4px;
+  }
+  .result .score{
+    font-family:"Fraunces", serif;
+    font-size:56px;
+    font-weight:700;
+    color:var(--navy);
+    margin:6px 0 4px;
+  }
+  .result .score span{
+    font-size:24px;
+    color:#6f74a0;
+    font-weight:500;
+  }
+  .result .msg{
+    font-size:16px;
+    color:#52588a;
+    max-width:44ch;
+    margin:10px auto 26px;
+    line-height:1.5;
+  }
+  .restart{
+    background:transparent;
+    border:1.5px solid var(--navy);
+    color:var(--navy);
+    padding:11px 20px;
+    border-radius:8px;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .restart:hover{background:var(--navy);color:var(--paper);}
+
+  footer.credit{
+    text-align:center;
+    margin-top:26px;
+    font-size:13px;
+    color:#8f93bb;
+  }
+
+  @media (max-width:480px){
+    .card{padding:24px 20px;}
+    h1{font-size:26px;}
+    .prompt{font-size:19px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <span class="kicker">SVT — Chapitre 2</span>
+    <h1>Des cellules de l'individu à son phénotype</h1>
+    <p class="subtitle">10 questions pour vérifier ce que tu as retenu du chapitre : noyau, chromosomes, ADN, caryotype et variations du phénotype.</p>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </header>
+
+  <main class="card" id="quizCard"></main>
+
+  <footer class="credit">D'après le cours « Chapitre 2 : Des cellules de l'individu à son phénotype »</footer>
+</div>
+
+<script>
+const questions = [
+  {
+    prompt: "Qu'est-ce qu'un caractère, chez un individu ?",
+    options: [
+      "Un élément observable chez cet individu (couleur, forme d'un membre...)",
+      "Un chromosome particulier",
+      "Une cellule de la peau",
+      "Un microscope utilisé pour l'observer"
+    ],
+    correct: 0,
+    explanation: "Un caractère est un élément observable chez un individu, comme la couleur des yeux ou des cheveux."
+  },
+  {
+    prompt: "Qu'est-ce que le phénotype d'un individu ?",
+    options: [
+      "Le nombre de ses chromosomes uniquement",
+      "L'ensemble des caractères observables chez cet individu",
+      "La forme de son noyau",
+      "La molécule d'ADN qu'il possède"
+    ],
+    correct: 1,
+    explanation: "Le phénotype est l'ensemble des caractères observables chez un individu (couleur de peau, des yeux, des cheveux...)."
+  },
+  {
+    prompt: "Dans quelle structure de la cellule est localisée l'information responsable des caractères d'un individu ?",
+    options: ["Le cytoplasme", "La membrane", "Le noyau", "Les mitochondries"],
+    correct: 2,
+    explanation: "L'expérience de transfert de noyau chez la souris (noyau marron transféré dans une cellule-œuf blanche) a montré que l'information est localisée dans le noyau de la cellule."
+  },
+  {
+    prompt: "Quand elle est condensée et visible au microscope, quelle est la forme de l'information contenue dans le noyau ?",
+    options: ["Un chromosome", "Une membrane", "Un cytoplasme", "Un caryotype"],
+    correct: 0,
+    explanation: "Dans certaines cellules, de fins filaments apparaissent à la place du noyau : ce sont les chromosomes, qui portent l'information à l'origine des caractères."
+  },
+  {
+    prompt: "Quelle molécule compose les chromosomes et porte les informations sur nos caractères ?",
+    options: ["L'ARN", "L'ADN (Acide Désoxyribonucléique)", "Le glucose", "La nucléine seule"],
+    correct: 1,
+    explanation: "Chaque chromosome est constitué d'une molécule d'ADN qui porte les informations sur nos caractères (découverte d'Avery). Sa structure est une double hélice (Franklin)."
+  },
+  {
+    prompt: "Combien de chromosomes possède une cellule humaine (hors cellules reproductrices) ?",
+    options: ["23 chromosomes", "38 chromosomes", "46 chromosomes", "78 chromosomes"],
+    correct: 2,
+    explanation: "Une cellule humaine possède 46 chromosomes, soit 23 paires, dont une paire de chromosomes sexuels (XX ou XY)."
+  },
+  {
+    prompt: "Qu'est-ce qu'un caryotype ?",
+    options: [
+      "Une photographie du noyau prise au microscope électronique",
+      "L'ensemble des chromosomes d'une cellule rangés par paires de même taille",
+      "La liste des caractères observables d'un individu",
+      "Le nombre de cellules dans un organisme"
+    ],
+    correct: 1,
+    explanation: "Un caryotype est l'ensemble des chromosomes d'une cellule, classés par paires de même taille. Il permet par exemple de déterminer l'espèce et le sexe d'un individu."
+  },
+  {
+    prompt: "Dans un même organisme (par exemple un être humain), le nombre de chromosomes est-il le même dans toutes les cellules ?",
+    options: [
+      "Non, il varie selon le type de cellule",
+      "Oui, toutes les cellules d'un organisme ont le même nombre de chromosomes",
+      "Seules les cellules de la peau en ont",
+      "Cela dépend uniquement de l'âge de la personne"
+    ],
+    correct: 1,
+    explanation: "Que ce soit une cellule de peau, de cheveu, de sang ou de salive, toutes les cellules d'un même organisme ont le même nombre de chromosomes."
+  },
+  {
+    prompt: "Lors d'une division cellulaire (mitose), à quoi sert la duplication des chromosomes ?",
+    options: [
+      "À réduire de moitié le nombre de chromosomes",
+      "À permettre aux deux nouvelles cellules d'avoir le même nombre de chromosomes que la cellule de départ",
+      "À transformer les chromosomes en ADN",
+      "À faire disparaître le noyau définitivement"
+    ],
+    correct: 1,
+    explanation: "Avant la division, chaque chromosome est dupliqué (il passe d'un bras à deux bras). Lors de la division, les deux bras se séparent, donnant deux cellules identiques à la cellule de départ."
+  },
+  {
+    prompt: "Les variations du phénotype dues à l'environnement (soleil, température, type de sol) sont-elles transmises à la descendance ?",
+    options: [
+      "Oui, elles sont toujours héréditaires",
+      "Non, ces modifications du phénotype ne sont pas héréditaires",
+      "Seulement chez les plantes",
+      "Seulement si elles apparaissent avant la naissance"
+    ],
+    correct: 1,
+    explanation: "L'environnement (soleil, température, éléments du sol...) peut modifier certains caractères, comme la couleur de peau ou du pelage, mais ces modifications ne sont pas transmises aux descendants."
+  }
+];
+
+let current = 0;
+let score = 0;
+let answered = false;
+
+const card = document.getElementById('quizCard');
+const progressFill = document.getElementById('progressFill');
+
+function renderQuestion(){
+  answered = false;
+  const q = questions[current];
+  progressFill.style.width = (current / questions.length * 100) + '%';
+
+  card.innerHTML = `
+    <div class="qnum">Question ${current + 1} sur ${questions.length}</div>
+    <p class="prompt">${q.prompt}</p>
+    <div class="options" id="optionsWrap"></div>
+    <div class="feedback" id="feedback"></div>
+    <div class="actions"><button class="next" id="nextBtn">${current === questions.length - 1 ? 'Voir le résultat' : 'Question suivante'}</button></div>
+  `;
+
+  const optionsWrap = document.getElementById('optionsWrap');
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.textContent = opt;
+    btn.addEventListener('click', () => selectAnswer(i));
+    optionsWrap.appendChild(btn);
+  });
+}
+
+function selectAnswer(i){
+  if(answered) return;
+  answered = true;
+  const q = questions[current];
+  const buttons = document.querySelectorAll('.option');
+  buttons.forEach((b, idx) => {
+    b.disabled = true;
+    if(idx === q.correct) b.classList.add('correct');
+    else if(idx === i) b.classList.add('incorrect');
+  });
+
+  const isCorrect = i === q.correct;
+  if(isCorrect) score++;
+
+  const feedback = document.getElementById('feedback');
+  feedback.classList.add('show', isCorrect ? 'good' : 'bad');
+  feedback.innerHTML = `<span class="verdict">${isCorrect ? 'Bonne réponse !' : 'Pas tout à fait.'}</span>${q.explanation}`;
+
+  document.getElementById('nextBtn').classList.add('show');
+}
+
+document.addEventListener('click', (e) => {
+  if(e.target && e.target.id === 'nextBtn'){
+    current++;
+    if(current < questions.length){
+      renderQuestion();
+    } else {
+      renderResult();
+    }
+  }
+  if(e.target && e.target.id === 'restartBtn'){
+    current = 0;
+    score = 0;
+    renderQuestion();
+  }
+});
+
+function renderResult(){
+  progressFill.style.width = '100%';
+  let msg;
+  if(score === questions.length) msg = "Parfait ! Tu maîtrises le lien entre cellule, noyau, chromosomes et phénotype.";
+  else if(score >= questions.length * 0.7) msg = "Très bien ! Relis juste les points manqués pour consolider le chapitre.";
+  else if(score >= questions.length * 0.4) msg = "Pas mal, mais il serait utile de revoir le cours pour consolider quelques notions.";
+  else msg = "Ce chapitre mérite d'être revu : n'hésite pas à relire le cours avant de refaire le quiz.";
+
+  card.innerHTML = `
+    <div class="result">
+      <div class="qnum">Résultat</div>
+      <div class="score">${score}<span> / ${questions.length}</span></div>
+      <p class="msg">${msg}</p>
+      <button class="restart" id="restartBtn">Refaire le quiz</button>
+    </div>
+  `;
+}
+
+renderQuestion();
+</script>
+</body>
+</html>
