@@ -89,5 +89,13 @@
     "slug": "quiz-revisions-cellules-4eme",
     "chemin": "/qcm/4e/quiz-revisions-cellules-4eme/",
     "date": "2026-11-15T09:26:47.444Z"
+  },
+  {
+    "titre": "Révisions 3ème chapitre 2",
+    "domaine": "La planète Terre",
+    "niveau": "3e",
+    "slug": "revisions-3eme-chapitre-2",
+    "chemin": "/qcm/3e/revisions-3eme-chapitre-2/",
+    "date": "2026-11-17T21:28:15.524Z"
   }
 ]
