@@ -1,0 +1,361 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Révisions SVT Terre active</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Exo+2:wght@500;700;800&family=Barlow:wght@400;500;600&display=swap">
+<style>
+/* Layout: one centred column, tabs switch between flashcards and QCM. Colours come from the course slides: navy text, leaf green, water blue, and red for "à retenir". */
+:root {
+  --bg: #f4f7f2; --surface: #ffffff; --fg: #14224d; --muted: #5a6784; --line: #d5ddd3;
+  --green: #4a7a37; --green-soft: #e1eed6; --blue: #2c5aa8; --blue-soft: #e0e9f7;
+  --red: #c4161c; --red-soft: #fce8e8; --bad: #a8430e; --bad-soft: #fbe9dd;
+  --display: "Exo 2", "Trebuchet MS", system-ui, sans-serif;
+  --body: "Barlow", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1526; --surface: #172038; --fg: #e8edf8; --muted: #9ba8c6; --line: #2a3657;
+    --green: #93c571; --green-soft: #1e3222; --blue: #86adf0; --blue-soft: #1b2a48;
+    --red: #ff8080; --red-soft: #3a1d26; --bad: #ffa273; --bad-soft: #3a2619;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1526; --surface: #172038; --fg: #e8edf8; --muted: #9ba8c6; --line: #2a3657;
+  --green: #93c571; --green-soft: #1e3222; --blue: #86adf0; --blue-soft: #1b2a48;
+  --red: #ff8080; --red-soft: #3a1d26; --bad: #ffa273; --bad-soft: #3a2619;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 17px; line-height: 1.5; padding-inline: 16px; padding-block: 28px 56px; }
+.wrap { max-width: 720px; margin-inline: auto; display: flex; flex-direction: column; gap: 22px; }
+header { display: flex; flex-direction: column; gap: 6px; }
+.eyebrow { font-family: var(--display); font-weight: 700; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--green); }
+h1 { font-family: var(--display); font-weight: 800; font-size: clamp(26px, 6vw, 38px); line-height: 1.12; margin: 0; text-wrap: balance; }
+.lead { margin: 0; color: var(--muted); text-wrap: pretty; }
+.legend { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); }
+.dot { width: 12px; height: 12px; border-radius: 50%; background: var(--red); flex: none; }
+.tabs { display: flex; gap: 8px; border-bottom: 2px solid var(--line); }
+.tab { font-family: var(--display); font-weight: 700; font-size: 17px; background: none; color: var(--muted); border: 0; border-bottom: 4px solid transparent; margin-bottom: -2px; padding: 10px 14px; cursor: pointer; border-radius: 6px 6px 0 0; }
+.tab[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--green); }
+.tab:hover { color: var(--fg); }
+:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+.meter { display: flex; align-items: center; gap: 12px; font-family: var(--display); font-weight: 700; font-size: 15px; font-variant-numeric: tabular-nums; }
+.bar { flex: 1; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
+.bar > i { display: block; height: 100%; width: 0; background: var(--green); transition: width .3s; }
+.card { display: grid; width: 100%; text-align: left; padding: 0; border: 0; background: none; color: inherit; font: inherit; cursor: pointer; perspective: 1200px; }
+.card-inner { display: grid; transform-style: preserve-3d; transition: transform .5s; }
+.card.flipped .card-inner { transform: rotateY(180deg); }
+.face { grid-area: 1 / 1; backface-visibility: hidden; -webkit-backface-visibility: hidden; min-height: 300px; padding: 22px 22px 26px; border-radius: 14px; border: 2px solid var(--line); background: var(--surface); display: flex; flex-direction: column; gap: 14px; }
+.face.back { transform: rotateY(180deg); border-color: var(--red); background: var(--red-soft); }
+.tag { font-size: 13px; color: var(--muted); letter-spacing: .02em; }
+.label { font-family: var(--display); font-weight: 800; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+.front .label { color: var(--blue); }
+.back .label { color: var(--red); }
+.txt { font-size: clamp(19px, 4.4vw, 23px); line-height: 1.42; margin: auto 0; text-wrap: pretty; }
+.front .txt { font-family: var(--display); font-weight: 700; }
+.back .txt { color: var(--red); font-weight: 500; }
+.back .txt b { font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.back .txt .ex { color: var(--blue); font-weight: 600; text-decoration: none; }
+.hint { align-self: flex-end; font-size: 13px; color: var(--muted); }
+.row { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn { font-family: var(--display); font-weight: 700; font-size: 16px; padding: 12px 18px; border-radius: 10px; cursor: pointer; border: 2px solid var(--line); background: var(--surface); color: var(--fg); min-height: 48px; }
+.btn:hover:not(:disabled) { border-color: var(--fg); }
+.btn:disabled { opacity: .45; cursor: default; }
+.btn.primary { background: var(--green); border-color: var(--green); color: #fff; }
+.btn.review { border-color: var(--bad); color: var(--bad); }
+.btn.known { border-color: var(--green); color: var(--green); }
+:root[data-theme="dark"] .btn.primary { color: #0e1526; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn.primary { color: #0e1526; } }
+.grow { flex: 1 1 140px; }
+.spacer { flex: 1; }
+.q { font-family: var(--display); font-weight: 700; font-size: clamp(20px, 4.6vw, 25px); line-height: 1.3; margin: 0; text-wrap: balance; }
+.opts { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.opt { width: 100%; display: flex; gap: 14px; align-items: flex-start; text-align: left; font: inherit; color: var(--fg); background: var(--surface); border: 2px solid var(--line); border-radius: 12px; padding: 13px 14px; cursor: pointer; }
+.opt:hover:not(:disabled) { border-color: var(--blue); }
+.opt .ltr { font-family: var(--display); font-weight: 800; width: 28px; height: 28px; border-radius: 50%; background: var(--blue-soft); color: var(--blue); display: grid; place-items: center; flex: none; font-size: 15px; }
+.opt .t { min-width: 0; padding-top: 2px; }
+.opt:disabled { cursor: default; }
+.opt.right { border-color: var(--green); background: var(--green-soft); }
+.opt.right .ltr { background: var(--green); color: #fff; }
+.opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.opt.wrong .ltr { background: var(--bad); color: #fff; }
+.opt.dim { opacity: .6; }
+.fb { border-radius: 12px; padding: 14px 16px; background: var(--blue-soft); }
+.fb strong { font-family: var(--display); }
+.fb.ok strong { color: var(--green); }
+.fb.ko strong { color: var(--bad); }
+.fb p { margin: 4px 0 0; text-wrap: pretty; }
+.result { background: var(--surface); border: 2px solid var(--line); border-radius: 14px; padding: 24px 20px; display: flex; flex-direction: column; gap: 14px; }
+.score { font-family: var(--display); font-weight: 800; font-size: 56px; line-height: 1; font-variant-numeric: tabular-nums; }
+.score small { font-size: 26px; color: var(--muted); }
+.result h2 { font-family: var(--display); font-size: 22px; margin: 0; }
+.result p { margin: 0; color: var(--muted); }
+.miss { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.miss li { border-left: 4px solid var(--bad); padding: 4px 0 4px 12px; }
+.miss b { display: block; }
+.miss span { color: var(--muted); font-size: 15px; }
+.tally { display: flex; gap: 18px; flex-wrap: wrap; font-family: var(--display); font-weight: 700; }
+.tally .k { color: var(--green); }
+.tally .r { color: var(--bad); }
+.best { font-size: 14px; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { .card-inner, .bar > i { transition: none; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">SVT · 3ème · 2026/2027</div>
+    <h1>Chapitre 2 : la Terre, planète active</h1>
+    <p class="lead">10 flashcards pour apprendre les phrases à retenir, puis 10 QCM pour vérifier que tout est compris.</p>
+    <span class="legend"><span class="dot" aria-hidden="true"></span>Le rouge, comme dans le cours, marque ce qu’il faut retenir.</span>
+  </header>
+  <div class="tabs" role="tablist" aria-label="Mode de révision">
+    <button class="tab" role="tab" id="tab-flash" aria-selected="true" aria-controls="panel-flash">Flashcards</button>
+    <button class="tab" role="tab" id="tab-qcm" aria-selected="false" aria-controls="panel-qcm">QCM</button>
+  </div>
+  <section id="panel-flash" role="tabpanel" aria-labelledby="tab-flash" style="display:flex;flex-direction:column;gap:18px"></section>
+  <section id="panel-qcm" role="tabpanel" aria-labelledby="tab-qcm" style="display:flex;flex-direction:column;gap:18px" hidden></section>
+</div>
+
+<script>
+(function () {
+  var CARDS = [
+    { tag: "I.A · Localisation à la surface de la Terre",
+      q: "Qu’est-ce qu’une plaque ?",
+      a: "Une <b>plaque</b> est une zone de la planète d’<b>activité sismique et volcanique faible</b> qui est <b>délimitée par une activité sismique et volcanique forte et régulière</b>." },
+    { tag: "I.B · Exploration en profondeur",
+      q: "De quoi est formée la partie externe du globe terrestre ?",
+      a: "La partie externe du globe terrestre est formée de <b>plaques de lithosphère rigide</b> d’environ <b>100 kilomètres d’épaisseur</b>." },
+    { tag: "I.B · Exploration en profondeur",
+      q: "Sur quoi reposent les plaques de lithosphère ?",
+      a: "Elles reposent sur l’<b>asthénosphère</b> qui est <b>moins rigide</b>." },
+    { tag: "II · Aux limites des plaques",
+      q: "Quels sont les deux types de mouvements entre les plaques ?",
+      a: "<b>Divergence</b> = <b>écartement</b>. <b>Convergence</b> = <b>rapprochement</b>." },
+    { tag: "II · Aux limites des plaques",
+      q: "Que se passe-t-il entre les plaques au niveau des dorsales ?",
+      a: "Au niveau des dorsales, les plaques <b>divergent</b>." },
+    { tag: "II · Aux limites des plaques",
+      q: "Comment de la lithosphère océanique se forme-t-elle au niveau des dorsales ?",
+      a: "De la <b>lithosphère océanique se forme</b> grâce à un volcanisme de type <b>effusif</b>." },
+    { tag: "II · Aux limites des plaques",
+      q: "Que se passe-t-il au niveau des zones de convergence ?",
+      a: "Au niveau des zones de convergence (<b>zone de subduction</b>), une plaque <b>s’enfonce sous une autre</b>." },
+    { tag: "II · Aux limites des plaques",
+      q: "Quel type de volcanisme observe-t-on en surface dans une zone de subduction ?",
+      a: "Un volcanisme en surface de type <b>explosif</b>." },
+    { tag: "III · L’énergie interne de la Terre",
+      q: "Qu’est-ce qui permet à l’énergie interne de la Terre de se dissiper ?",
+      a: "Les <b>mouvements de roches en profondeur (convection)</b> et le <b>déplacement des plaques</b> permettent à l’énergie interne de la Terre de se dissiper." },
+    { tag: "III · L’énergie interne de la Terre",
+      q: "Où l’énergie interne de la Terre se dissipe-t-elle en particulier ?",
+      a: "Elle se dissipe <b>en surface</b>, en particulier dans les <b>zones volcaniques</b>." }
+  ];
+
+  var QCM = [
+    { q: "Une plaque est une zone de la planète :",
+      o: ["D’activité sismique et volcanique forte, délimitée par une activité faible", "D’activité sismique et volcanique faible, délimitée par une activité forte et régulière", "Sans roche, remplie d’eau", "Où l’on ne trouve que des volcans"], c: 1,
+      e: "À l’intérieur d’une plaque il y a peu de séismes et de volcans. Ils sont fréquents sur les limites de plaques." },
+    { q: "Sur la carte de la Terre, où se trouvent les volcans et les séismes ?",
+      o: ["Répartis au hasard sur toute la planète", "Uniquement au centre des continents", "Aux mêmes endroits, souvent alignés, autour de zones inactives : les plaques", "Uniquement au fond des océans"], c: 2,
+      e: "Les volcans et les séismes sont fréquents aux mêmes endroits sur Terre, parfois alignés. Cela dessine des zones inactives entourées de séismes et de volcans : les plaques." },
+    { q: "Pourquoi les géologues utilisent-ils les ondes sismiques pour connaître l’intérieur de la Terre ?",
+      o: ["Parce que les ondes se déplacent plus vite dans l’air", "Parce que le forage le plus profond ne fait que 12,2 km, alors que le centre de la Terre est à environ 6 400 km", "Parce que les forages sont interdits", "Parce que les roches sont transparentes"], c: 1,
+      e: "On ne peut pas atteindre le centre de la Terre. Les géologues envoient des ondes dans le sous-sol et mesurent le temps d’aller-retour, comme dans une échographie." },
+    { q: "Si la vitesse des ondes sismiques augmente dans une roche, cette roche est :",
+      o: ["Moins rigide", "Plus chaude", "Plus rigide", "Plus colorée"], c: 2,
+      e: "La vitesse des ondes change avec la rigidité de la roche : plus la roche est rigide, plus la vitesse augmente. Si elle est moins rigide, la vitesse diminue." },
+    { q: "À partir de 100 km de profondeur, la vitesse des ondes diminue. Que peut-on en déduire ?",
+      o: ["La roche est plus rigide : c’est la lithosphère", "La roche est moins rigide : c’est l’asthénosphère", "La roche est liquide : c’est le noyau", "Il n’y a plus de roche"], c: 1,
+      e: "De 0 à 100 km, la vitesse augmente : roche très rigide, c’est la lithosphère. Après 100 km, elle diminue : roche moins rigide, c’est l’asthénosphère." },
+    { q: "Quel mouvement entre deux plaques correspond à un rapprochement ?",
+      o: ["La divergence", "La convergence", "L’écartement", "La dissipation"], c: 1,
+      e: "Divergence = écartement des plaques. Convergence = rapprochement des plaques." },
+    { q: "Au niveau d’une dorsale, on observe :",
+      o: ["Une plaque qui s’enfonce sous une autre, avec un volcanisme explosif", "Des plaques qui divergent, de la lithosphère océanique qui se forme et un volcanisme effusif", "Des plaques qui se rapprochent et une fosse océanique", "Aucun volcanisme"], c: 1,
+      e: "Le long de la dorsale, du magma venu de l’asthénosphère remonte par le rift, se refroidit et forme du basalte : de la nouvelle lithosphère océanique." },
+    { q: "Dans une zone de subduction, on observe :",
+      o: ["Des plaques qui s’écartent et un volcanisme effusif", "Une dorsale et un rift", "Une plaque qui s’enfonce sous une autre, des séismes et un volcanisme explosif en surface", "Aucun mouvement de plaque"], c: 2,
+      e: "Les frottements provoquent des séismes. En profondeur, les roches fondent en partie : le magma monte et forme des volcans de type explosif." },
+    { q: "Pourquoi l’océan Atlantique continue-t-il de s’élargir ?",
+      o: ["Les plaques sud-américaine et africaine s’écartent de quelques centimètres par an, et du magma remonte le long de la dorsale", "Les plaques sud-américaine et africaine se rapprochent", "Le niveau de l’eau monte", "Les volcans explosifs le comblent"], c: 0,
+      e: "Les roches les plus jeunes sont au centre de l’océan et les plus âgées près des continents. C’est ainsi que l’océan s’est ouvert et qu’il continue de s’élargir." },
+    { q: "Qu’est-ce qui permet à l’énergie interne de la Terre de se dissiper en surface ?",
+      o: ["La chute de météorites", "Les mouvements de roches en profondeur (convection) et le déplacement des plaques", "Le vent et les marées", "Les rayons du Soleil"], c: 1,
+      e: "Cette énergie interne vient de la formation de la Terre il y a 4,6 milliards d’années et de sa radioactivité. Elle se dissipe en surface, en particulier dans les zones volcaniques." }
+  ];
+
+  var $ = function (id) { return document.getElementById(id); };
+  var LETTERS = ["A", "B", "C", "D"];
+
+  var tabs = { flash: $("tab-flash"), qcm: $("tab-qcm") };
+  var panels = { flash: $("panel-flash"), qcm: $("panel-qcm") };
+  var current = "flash";
+  function showTab(name) {
+    current = name;
+    Object.keys(tabs).forEach(function (k) {
+      tabs[k].setAttribute("aria-selected", String(k === name));
+      panels[k].hidden = k !== name;
+    });
+  }
+  tabs.flash.addEventListener("click", function () { showTab("flash"); });
+  tabs.qcm.addEventListener("click", function () { showTab("qcm"); });
+
+  /* Flashcards */
+  var deck = [], pos = 0, status = {}, flipped = false;
+  var fp = panels.flash;
+  function startDeck(indexes) {
+    deck = indexes.slice(); pos = 0; flipped = false;
+    if (indexes.length === CARDS.length) status = {};
+    renderFlash();
+  }
+  function renderFlash() {
+    if (pos >= deck.length) { renderFlashEnd(); return; }
+    var c = CARDS[deck[pos]];
+    fp.innerHTML =
+      '<div class="meter"><span>Carte ' + (pos + 1) + ' / ' + deck.length + '</span><div class="bar"><i style="width:' + (pos / deck.length * 100) + '%"></i></div></div>' +
+      '<button class="card" id="card" aria-label="Carte de révision. Touche pour retourner.">' +
+        '<span class="card-inner">' +
+          '<span class="face front"><span class="tag">' + c.tag + '</span><span class="label">Question</span><span class="txt">' + c.q + '</span><span class="hint">Touche la carte pour voir la réponse</span></span>' +
+          '<span class="face back" aria-hidden="true"><span class="tag">' + c.tag + '</span><span class="label"><span class="dot" aria-hidden="true"></span>À retenir</span><span class="txt">' + c.a + '</span><span class="hint">Touche pour revenir à la question</span></span>' +
+        '</span>' +
+      '</button>' +
+      '<div class="row" id="fnav"></div>';
+    $("card").addEventListener("click", function () { flip(); });
+    drawFlashButtons();
+  }
+  function flip() {
+    flipped = !flipped;
+    var card = $("card"); if (!card) return;
+    card.classList.toggle("flipped", flipped);
+    card.querySelector(".back").setAttribute("aria-hidden", String(!flipped));
+    card.querySelector(".front").setAttribute("aria-hidden", String(flipped));
+    drawFlashButtons();
+  }
+  function drawFlashButtons() {
+    var nav = $("fnav"); if (!nav) return;
+    if (!flipped) {
+      nav.innerHTML =
+        '<button class="btn" id="fprev"' + (pos === 0 ? " disabled" : "") + '>← Précédente</button>' +
+        '<span class="spacer"></span>' +
+        '<button class="btn primary" id="fflip">Voir la réponse</button>';
+      $("fflip").addEventListener("click", flip);
+    } else {
+      nav.innerHTML =
+        '<button class="btn" id="fprev"' + (pos === 0 ? " disabled" : "") + '>← Précédente</button>' +
+        '<button class="btn review grow" id="frev">À revoir</button>' +
+        '<button class="btn known grow" id="fknown">Je savais</button>';
+      $("frev").addEventListener("click", function () { mark("review"); });
+      $("fknown").addEventListener("click", function () { mark("known"); });
+    }
+    $("fprev").addEventListener("click", function () { goTo(pos - 1); });
+  }
+  function mark(s) { status[deck[pos]] = s; goTo(pos + 1); }
+  function goTo(n) {
+    if (n < 0) return;
+    flipped = false; pos = n;
+    if (pos >= deck.length) { renderFlashEnd(); return; }
+    renderFlash();
+  }
+  function renderFlashEnd() {
+    var known = 0, review = [];
+    deck.forEach(function (i) { if (status[i] === "known") known++; else review.push(i); });
+    var msg = review.length === 0
+      ? "Toutes les cartes sont sues. Passe au QCM pour tester la compréhension."
+      : "Refais les cartes à revoir jusqu’à les connaître, puis passe au QCM.";
+    fp.innerHTML =
+      '<div class="result"><h2>Tour terminé</h2>' +
+        '<div class="tally"><span class="k">' + known + ' sues</span><span class="r">' + review.length + ' à revoir</span></div>' +
+        '<p>' + msg + '</p><div class="row">' +
+          (review.length ? '<button class="btn primary" id="fredo">Refaire les cartes à revoir</button>' : '') +
+          '<button class="btn' + (review.length ? '' : ' primary') + '" id="fall">Tout recommencer</button>' +
+          '<button class="btn" id="fgoqcm">Aller au QCM</button>' +
+        '</div></div>';
+    if (review.length) $("fredo").addEventListener("click", function () { deck = review.slice(); pos = 0; flipped = false; renderFlash(); });
+    $("fall").addEventListener("click", function () { startDeck(CARDS.map(function (_, i) { return i; })); });
+    $("fgoqcm").addEventListener("click", function () { showTab("qcm"); });
+  }
+
+  /* QCM */
+  var qi = 0, score = 0, wrong = [], answered = false, order = [];
+  var qp = panels.qcm;
+  function shuffle(a) {
+    for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  }
+  function startQcm() { qi = 0; score = 0; wrong = []; renderQ(); }
+  function renderQ() {
+    answered = false;
+    var item = QCM[qi];
+    order = shuffle(item.o.map(function (_, i) { return i; }));
+    var html =
+      '<div class="meter"><span>Question ' + (qi + 1) + ' / ' + QCM.length + '</span><div class="bar"><i style="width:' + (qi / QCM.length * 100) + '%"></i></div></div>' +
+      '<h2 class="q">' + item.q + '</h2><ul class="opts">';
+    order.forEach(function (oi, k) {
+      html += '<li><button class="opt" data-k="' + k + '"><span class="ltr">' + LETTERS[k] + '</span><span class="t">' + item.o[oi] + '</span></button></li>';
+    });
+    html += '</ul><div id="fb" aria-live="polite"></div><div class="row" id="qnav"></div>';
+    qp.innerHTML = html;
+    Array.prototype.forEach.call(qp.querySelectorAll(".opt"), function (b) {
+      b.addEventListener("click", function () { answer(parseInt(b.getAttribute("data-k"), 10)); });
+    });
+  }
+  function answer(k) {
+    if (answered) return; answered = true;
+    var item = QCM[qi];
+    var ok = order[k] === item.c;
+    if (ok) score++; else wrong.push(qi);
+    Array.prototype.forEach.call(qp.querySelectorAll(".opt"), function (b, idx) {
+      b.disabled = true;
+      if (order[idx] === item.c) b.classList.add("right");
+      else if (idx === k) b.classList.add("wrong");
+      else b.classList.add("dim");
+    });
+    $("fb").innerHTML = '<div class="fb ' + (ok ? "ok" : "ko") + '"><strong>' + (ok ? "Bonne réponse." : "Pas tout à fait.") + '</strong><p>' + item.e + '</p></div>';
+    var last = qi === QCM.length - 1;
+    $("qnav").innerHTML = '<span class="spacer"></span><button class="btn primary" id="qnext">' + (last ? "Voir mon score" : "Question suivante →") + '</button>';
+    var nx = $("qnext");
+    nx.addEventListener("click", function () { qi++; if (qi >= QCM.length) renderResult(); else renderQ(); });
+    nx.focus();
+  }
+  function bestScore(newScore) {
+    var best = null;
+    try {
+      var v = localStorage.getItem("svt-terre-best");
+      best = v === null ? null : parseInt(v, 10);
+      if (best === null || isNaN(best) || newScore > best) { best = newScore; localStorage.setItem("svt-terre-best", String(best)); }
+    } catch (e) { best = null; }
+    return best;
+  }
+  function renderResult() {
+    var n = QCM.length;
+    var msg = score === n ? "Sans faute. Tu es prêt pour l’évaluation."
+      : score >= n * 0.8 ? "Très bien. Relis les points manqués ci-dessous."
+      : score >= n * 0.5 ? "C’est un bon début. Reprends les flashcards sur les points manqués."
+      : "Reprends les flashcards, puis refais le QCM.";
+    var best = bestScore(score);
+    var html = '<div class="result"><div class="score">' + score + '<small> / ' + n + '</small></div><h2>' + msg + '</h2>';
+    if (best !== null) html += '<div class="best">Meilleur score sur cet appareil : ' + best + ' / ' + n + '</div>';
+    if (wrong.length) {
+      html += '<p>À revoir :</p><ul class="miss">';
+      wrong.forEach(function (i) { html += '<li><b>' + QCM[i].q + '</b><span>' + QCM[i].o[QCM[i].c] + '</span></li>'; });
+      html += '</ul>';
+    }
+    html += '<div class="row"><button class="btn primary" id="qagain">Refaire le QCM</button><button class="btn" id="qtocards">Revoir les flashcards</button></div></div>';
+    qp.innerHTML = html;
+    $("qagain").addEventListener("click", startQcm);
+    $("qtocards").addEventListener("click", function () { showTab("flash"); });
+  }
+
+  document.addEventListener("keydown", function (e) {
+    if (current !== "flash" || pos >= deck.length) return;
+    if (e.key === "ArrowRight") { if (!flipped) flip(); else mark("known"); }
+    else if (e.key === "ArrowLeft") { goTo(pos - 1); }
+  });
+
+  startDeck(CARDS.map(function (_, i) { return i; }));
+  startQcm();
+})();
+</script>
+
+</body></html>
