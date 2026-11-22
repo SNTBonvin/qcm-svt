@@ -100,9 +100,11 @@ table.pun{border-collapse:collapse;min-width:100%}
 .hslots{display:flex;gap:4px;justify-content:center;align-items:flex-end}
 .cell{display:flex;gap:4px;justify-content:center}
 .half{min-width:48px;min-height:58px;padding:2px 3px;border-radius:6px;align-items:end;display:grid;place-items:center}
-.pun td{min-width:110px}
+.pun td{min-width:132px}
 .pun td.ok{background:var(--goodbg)}
 .pun td.ko{background:var(--badbg)}
+.pick{display:flex;gap:4px;justify-content:center;margin-top:6px}
+.sel{font:inherit;font-size:.85rem;padding:4px 2px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);max-width:62px}
 .pheno{font-size:.8rem;font-weight:700;margin-top:4px;min-height:1.2em}
 .phase{display:inline-block;font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .bars{display:grid;gap:6px;max-width:520px}
@@ -155,6 +157,7 @@ function init(){
     s2:{g:[0,1,2,3].map(function(){return {c9:null,c1:null};}),done:false,msg:null},
     s3:{fh:[0,1,2,3].map(function(){return {c9:null,c1:null};}),mh:[0,1,2,3].map(function(){return {c9:null,c1:null};}),
       hdrDone:false,done:false,msg:null,
+      ans:[0,1,2,3].map(function(){return [0,1,2,3].map(function(){return {g:'',r:''};});}),
       cells:[0,1,2,3].map(function(){return [0,1,2,3].map(function(){return {f:null,m:null};});}),
       cs:[0,1,2,3].map(function(){return [null,null,null,null];})},
     s4:{a:{},done:false}};
@@ -313,19 +316,19 @@ function r3(){
   if(!S.s2.done)return '<div class="card"><p>Termine d’abord l’étape 2.</p></div>';
   var hdr=function(sex,i){
     var g=(sex==='f'?s.fh:s.mh)[i];
-    if(s.hdrDone)return tok({t:'gam',sex:sex,c9:g.c9,c1:g.c1},gamHTML(g,'sm'),'gamTok');
+    if(s.hdrDone)return '<div class="hslots">'+gamHTML(g,'sm')+'</div>';
     return '<div class="hslots">'+slot('s3:h:'+sex+':'+i+':9',9,g.c9,true)+slot('s3:h:'+sex+':'+i+':1',1,g.c1,true)+'</div>';
   };
   var cols=[0,1,2,3].map(function(j){return '<th scope="col" aria-label="Gamète mâle '+(j+1)+'">'+hdr('m',j)+'</th>';}).join('');
   var rows=[0,1,2,3].map(function(i){
     var tds=[0,1,2,3].map(function(j){
-      var c=s.cells[i][j], st=s.cs[i][j];
-      var half=function(sex){
-        return zone('s3:c:'+i+':'+j+':'+sex, c[sex]?gamHTML(c[sex],'sm'):'<span class="ph">'+(sex==='f'?'♀':'♂')+'</span>','half',
-          (sex==='f'?'Gamète femelle':'Gamète mâle')+', ligne '+(i+1)+', colonne '+(j+1)+(c[sex]?' (rempli)':' (vide)'));
-      };
-      var ph=(st==='ok'&&c.f&&c.m)?pheLabel([c.f.c9,c.m.c9],[c.f.c1,c.m.c1]):'';
-      return '<td class="'+(st||'')+'"><div class="cell">'+half('f')+half('m')+'</div><div class="pheno">'+ph+'</div></td>';
+      var c=s.cells[i][j], st=s.cs[i][j], a=s.ans[i][j];
+      if(!s.hdrDone)return '<td><div class="cell"><div class="half"><span class="ph">♀</span></div><div class="half"><span class="ph">♂</span></div></div><div class="pheno"></div></td>';
+      var lock=(st==='ok')?' disabled':'';
+      var opt=function(v,t,cur){return '<option value="'+v+'"'+(cur===v?' selected':'')+'>'+t+'</option>';};
+      var sg='<select class="sel" data-sel="g" data-i="'+i+'" data-j="'+j+'" aria-label="Groupe sanguin, ligne '+(i+1)+', colonne '+(j+1)+'"'+lock+'>'+opt('','Groupe',a.g)+opt('A','A',a.g)+opt('B','B',a.g)+opt('AB','AB',a.g)+opt('O','O',a.g)+'</select>';
+      var sr='<select class="sel" data-sel="r" data-i="'+i+'" data-j="'+j+'" aria-label="Rhésus, ligne '+(i+1)+', colonne '+(j+1)+'"'+lock+'>'+opt('','Rhésus',a.r)+opt('+','rh+',a.r)+opt('-','rh\u2212',a.r)+'</select>';
+      return '<td class="'+(st||'')+'"><div class="cell"><div class="half">'+gamHTML(c.f,'sm')+'</div><div class="half">'+gamHTML(c.m,'sm')+'</div></div><div class="pick">'+sg+sr+'</div></td>';
     }).join('');
     return '<tr><th scope="row" aria-label="Gamète femelle '+(i+1)+'">'+hdr('f',i)+'</th>'+tds+'</tr>';
   }).join('');
@@ -333,16 +336,16 @@ function r3(){
   var btns;
   if(s.done)btns='<button class="btn" data-act="next">Étape 4 : faire le bilan →</button>';
   else if(!s.hdrDone)btns='<button class="btn" data-act="check3a">Vérifier les gamètes des parents</button>';
-  else btns='<button class="btn" data-act="check3b">Vérifier le tableau</button><button class="btn ghost" data-act="ex3">Voir un exemple</button><button class="btn ghost" data-act="clear3">Effacer le tableau</button>';
+  else btns='<button class="btn" data-act="check3b">Vérifier le tableau</button>';
   var phase=s.hdrDone?'Partie B · Les enfants possibles':'Partie A · Les gamètes des parents';
   return '<div class="card"><div class="mission"><b class="t">Ta mission</b>'+
     '<p>Camille et Noa attendent un enfant. Camille est de groupe A rhésus +, Noa est de groupe B rhésus +. Quels enfants peuvent naître ?</p>'+
-    '<p><b>Partie A.</b> Complète les gamètes que chaque parent peut produire (en-têtes du tableau), puis vérifie. <b>Partie B.</b> Glisse chaque gamète dans les cases : la fécondation réunit un gamète de Camille (♀) et un gamète de Noa (♂).</p></div>'+
+    '<p><b>Partie A.</b> Complète les gamètes que chaque parent peut produire (en-têtes du tableau), puis vérifie. <b>Partie B.</b> Le tableau se remplit tout seul : chaque case montre la fécondation d\u2019un gamète de Camille (♀) et d\u2019un gamète de Noa (♂). Pour chaque case, choisis dans les listes le groupe sanguin et le rhésus de l\u2019enfant.</p></div>'+
     '<div class="people"><div class="person"><h3>Camille ♀ · A rh+</h3><div class="pairs">'+roSlots(MOTH.g9,MOTH.g1)+'</div><p class="ph" style="text-align:left">Elle a reçu A et + de son père, O et − de sa mère.</p></div>'+
     '<div class="person"><h3>Noa ♂ · B rh+</h3><div class="pairs">'+roSlots(FATH.g9,FATH.g1)+'</div><p class="ph" style="text-align:left">Il a reçu B et − de son père, O et + de sa mère.</p></div></div>'+
     (s.hdrDone?'':'<div class="card"><h3>Matériel génétique à disposition</h3>'+palette()+'</div>')+
     '<span class="phase">'+phase+'</span>'+table+
-    '<p class="ph" style="text-align:left">Dans chaque case : le gamète de Camille (♀) à gauche, celui de Noa (♂) à droite.</p>'+
+    '<p class="ph" style="text-align:left">Dans chaque case : le gamète de Camille (♀) à gauche, celui de Noa (♂) à droite. Les chromosomes de l\u2019enfant sont ceux des deux gamètes réunis.</p>'+
     msgBox(s.msg)+'<div class="btns">'+btns+'</div></div>';
 }
 function d3(a,p){
@@ -370,21 +373,22 @@ function check3a(){
   var rm=checkGametes(s.mh,FATH.g9,FATH.g1,'Noa','ne possède pas');
   if(!rm.ok){s.msg={ok:false,text:'Gamètes de Noa (en haut du tableau) : '+rm.text};return;}
   s.hdrDone=true;
-  s.msg={ok:true,text:'Chaque parent produit 4 sortes de gamètes. Les gamètes sont maintenant déplaçables : glisse-les dans les cases du tableau.'};
+  for(var i=0;i<4;i++)for(var j=0;j<4;j++){s.cells[i][j]={f:{c9:s.fh[i].c9,c1:s.fh[i].c1},m:{c9:s.mh[j].c9,c1:s.mh[j].c1}};}
+  s.msg={ok:true,text:'Chaque parent produit 4 sortes de gamètes. Le tableau s\u2019est rempli : chaque case est une fécondation possible. Choisis le groupe sanguin et le rhésus de chaque enfant.'};
 }
 var same=function(a,b){return a&&b&&a.c9===b.c9&&a.c1===b.c1;};
 function check3b(){
   var s=S.s3, empty=0, ko=0;
   for(var i=0;i<4;i++)for(var j=0;j<4;j++){
-    var c=s.cells[i][j];
-    if(!c.f||!c.m){s.cs[i][j]=null;empty++;continue;}
-    var ok=same(c.f,s.fh[i])&&same(c.m,s.mh[j]);
+    var c=s.cells[i][j], a=s.ans[i][j];
+    if(!a.g||!a.r){s.cs[i][j]=null;empty++;continue;}
+    var ok=a.g===phen9([c.f.c9,c.m.c9])&&a.r===phen1([c.f.c1,c.m.c1]);
     s.cs[i][j]=ok?'ok':'ko'; if(!ok)ko++;
   }
-  if(!empty&&!ko){s.done=true;s.msg={ok:true,text:'Tableau complet et correct : 4 × 4 = 16 fécondations possibles, donc 16 cellules-œufs différentes. Regarde les caractères des enfants dans chaque case.'};return;}
+  if(!empty&&!ko){s.done=true;s.msg={ok:true,text:'Tableau complet et correct : 4 × 4 = 16 fécondations possibles, donc 16 enfants possibles.'};return;}
   var t=[];
-  if(ko)t.push(ko+' case(s) en rouge : la case doit contenir le gamète de sa ligne (♀) et celui de sa colonne (♂).');
-  if(empty)t.push('Il reste '+empty+' case(s) incomplète(s).');
+  if(ko)t.push(ko+' case(s) en rouge : regarde les chromosomes réunis dans la case. Rappel : A et B dominent O, et + domine \u2212.');
+  if(empty)t.push('Il reste '+empty+' case(s) sans groupe ou sans rhésus.');
   s.msg={ok:false,text:t.join(' ')};
 }
 function ex3(){
@@ -481,7 +485,6 @@ function render(){
     h.hidden=false;h.innerHTML='<span>Sélectionné :</span>'+v+'<span>Touche un emplacement pour le placer.</span><button class="btn ghost" data-act="unsel">Annuler</button>';
   }else{h.hidden=true;h.innerHTML='';}
   document.getElementById('foot').innerHTML=
-    '<details><summary>Pour l’enseignant</summary><p>Modèle simplifié : le gène du groupe sanguin ABO est sur la paire n°9 et celui du rhésus sur la paire n°1. Les deux gènes sont sur des chromosomes différents, donc le brassage se limite à la répartition indépendante des paires (sans échange entre chromosomes homologues). Les étapes 1 à 3 se réalisent en 30 à 40 minutes. Compétences travaillées : modéliser, utiliser un outil numérique, justifier une réponse à partir d’un tableau.</p></details>'+
     '<div class="btns"><button class="btn ghost" data-act="restart">Recommencer l’activité</button></div>';
 }
 function shake(id){requestAnimationFrame(function(){var z=document.querySelector('[data-z="'+id+'"]');if(z)z.classList.add('shake');});}
@@ -549,6 +552,11 @@ document.addEventListener('click',function(e){
     else{var inp=document.getElementById('in-'+q);if(!inp||inp.value==='')return;var v=+inp.value;S.s4.a[q]={v:v,ok:v===qd.ans};}
   }
   render();
+});
+document.addEventListener('change',function(e){
+  var t=e.target; if(!t.matches||!t.matches('select[data-sel]'))return;
+  var i=+t.dataset.i,j=+t.dataset.j; S.s3.ans[i][j][t.dataset.sel]=t.value; S.s3.cs[i][j]=null;
+  var td=t.closest('td'); if(td)td.classList.remove('ok','ko');
 });
 document.addEventListener('keydown',function(e){
   if(e.key==='Escape'&&selK){selK=null;render();return;}
