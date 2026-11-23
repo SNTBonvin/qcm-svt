@@ -106,5 +106,13 @@
     "chemin": "/qcm/3e/groupes-sanguins/",
     "date": "2026-11-22T18:21:51.381Z",
     "misAJourLe": "2026-11-22T18:40:52.982Z"
+  },
+  {
+    "titre": "Classification",
+    "domaine": "Vivant",
+    "niveau": "6e",
+    "slug": "classification",
+    "chemin": "/qcm/6e/classification/",
+    "date": "2026-11-23T09:04:15.901Z"
   }
 ]
