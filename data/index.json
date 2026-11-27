@@ -114,5 +114,13 @@
     "slug": "classification",
     "chemin": "/qcm/6e/classification/",
     "date": "2026-11-23T09:04:15.901Z"
+  },
+  {
+    "titre": "Bonus antiseptique",
+    "domaine": "Micro organisme",
+    "niveau": "5e",
+    "slug": "antiseptique",
+    "chemin": "/qcm/5e/antiseptique/",
+    "date": "2026-11-27T10:45:39.063Z"
   }
 ]
