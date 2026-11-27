@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quel traitement pour quelle infection ?</title>
+<style>
+:root{--bg:#f3f6fa;--card:#fff;--ink:#12263a;--mut:#53677b;--acc:#0d7f84;--accbg:#e2f3f3;--ok:#1b7a46;--okbg:#e4f5ea;--bad:#b3261e;--badbg:#fdeceb;--line:#d3dde8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1a27;--card:#14263a;--ink:#e8eff6;--mut:#9fb2c5;--acc:#4fd0d5;--accbg:#12353d;--ok:#74e0a1;--okbg:#14342a;--bad:#ff9a92;--badbg:#3a1d1f;--line:#2a4058}}
+:root[data-theme="dark"]{--bg:#0d1a27;--card:#14263a;--ink:#e8eff6;--mut:#9fb2c5;--acc:#4fd0d5;--accbg:#12353d;--ok:#74e0a1;--okbg:#14342a;--bad:#ff9a92;--badbg:#3a1d1f;--line:#2a4058}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:17px/1.6 Georgia,"Iowan Old Style","Times New Roman",serif}
+main{max-width:46rem;margin:0 auto;padding:1rem 1rem 3rem}
+h1,h2,h3,button,select,.tag,th{font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif}
+h1{font-size:1.7rem;line-height:1.2;margin:.8rem 0 .4rem}
+h2{font-size:1.3rem;margin:2.2rem 0 .6rem;padding-bottom:.3rem;border-bottom:2px solid var(--ink)}
+.box,.q{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:.9rem 1rem;margin:.8rem 0}
+.box h3{margin:.1rem 0 .4rem;font-size:1rem}
+.box p,.q p{margin:.4rem 0}
+.doc{border-left:4px solid var(--acc)}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{border:1px solid var(--line);padding:.35rem .5rem;text-align:left;vertical-align:top}
+th{background:var(--accbg)}
+.tw{overflow-x:auto}
+button,select{font-size:.95rem;padding:.45rem .6rem;border-radius:5px;border:1.5px solid var(--acc);background:var(--card);color:var(--ink);cursor:pointer;max-width:100%}
+button.main{background:var(--acc);color:var(--card);font-weight:700}
+button:focus-visible,select:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+textarea,input[type=text]{width:100%;box-sizing:border-box;font:inherit;padding:.5rem;border:1.5px solid var(--line);border-radius:5px;background:var(--bg);color:var(--ink)}
+textarea{min-height:7rem;resize:vertical;margin:.3rem 0}
+.row{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin:.4rem 0}
+.fb{margin:.5rem 0 0;padding:.5rem .7rem;border-radius:5px;font-size:.95rem}
+.ok{background:var(--okbg);color:var(--ok)}.no{background:var(--badbg);color:var(--bad)}
+.chips{display:flex;gap:.4rem;flex-wrap:wrap;margin:.4rem 0}
+.tag{border:1.5px solid var(--line);color:var(--mut);padding:.1rem .6rem;border-radius:99px;font-size:.85rem}
+.tag.on{border-color:var(--ok);background:var(--okbg);color:var(--ok)}
+.score{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--ink);color:var(--bg);font:600 .9rem "Trebuchet MS",sans-serif;padding:.4rem .8rem;border-radius:0 0 6px 6px}
+.note{font-size:.9rem;color:var(--mut)}
+@media(prefers-reduced-motion:no-preference){.fb{animation:f .25s}@keyframes f{from{opacity:0}}}
+</style>
+</head>
+<body>
+<div class="score" id="score">Bonnes réponses : 0 / 17</div>
+<main>
+<h1>Quel traitement pour quelle infection ?</h1>
+<p>À partir des documents, associe chaque type d’infection au traitement adapté.</p>
+
+<h2>Partie 1 : découvre les traitements</h2>
+<div class="box doc"><h3>Document 1 : les types de traitements</h3>
+<p>Quand une infection est trop forte pour que le corps s’en débarrasse seul, le médecin peut prescrire un médicament. Il existe plusieurs types de traitements.</p>
+<p><b>Les antibiotiques</b> détruisent les bactéries ou les empêchent de se multiplier. Les antibiotiques permettent de lutter uniquement contre des infections bactériennes. Le premier, la pénicilline, a été découvert par Alexander Fleming en 1928.</p>
+<p><b>Les antiviraux</b> empêchent des virus de se multiplier. Il existe des médicaments antiviraux qui permettent de lutter contre certaines infections virales.</p>
+<p><b>Les médicaments contre les symptômes</b> (comme le paracétamol) soulagent la douleur ou la fièvre. Ils ne détruisent pas le micro-organisme responsable de l’infection.</p></div>
+<div class="q" id="dec"><p><b>À toi de découvrir :</b> à l’aide du document 1, associe chaque type de traitement à ce contre quoi il agit.</p>
+<div class="tw"><table><tr><th>Type de traitement</th><th>Il agit contre…</th></tr>
+<tr><td>Les antibiotiques</td><td><select data-a="b"><option value="">choisis…</option><option value="b">les infections bactériennes</option><option value="v">certaines infections virales</option><option value="s">la douleur et la fièvre, sans détruire le micro-organisme</option></select></td></tr>
+<tr><td>Les antiviraux</td><td><select data-a="v"><option value="">choisis…</option><option value="b">les infections bactériennes</option><option value="v">certaines infections virales</option><option value="s">la douleur et la fièvre, sans détruire le micro-organisme</option></select></td></tr>
+<tr><td>Les médicaments contre les symptômes</td><td><select data-a="s"><option value="">choisis…</option><option value="b">les infections bactériennes</option><option value="v">certaines infections virales</option><option value="s">la douleur et la fièvre, sans détruire le micro-organisme</option></select></td></tr></table></div>
+<p>Existe-t-il un antiviral contre tous les virus ? <select data-a="n"><option value="">choisis…</option><option value="o">oui</option><option value="n">non, seulement contre certains virus</option></select></p>
+<p class="fb" hidden></p></div>
+
+<h2>Partie 2 : les dossiers des patients</h2>
+<div class="box doc"><h3>Document 2 : ce que sait le médecin</h3>
+<div class="tw"><table>
+<tr><th>Micro-organisme responsable</th><th>Médicament qui existe contre lui</th></tr>
+<tr><td>Bactéries (streptocoque, colibacille…)</td><td>Des antibiotiques</td></tr>
+<tr><td>Virus de l’herpès</td><td>Un antiviral</td></tr>
+<tr><td>Virus de la grippe</td><td>Un antiviral, prescrit dans les formes sévères ou chez les personnes fragiles</td></tr>
+<tr><td>Virus du rhume</td><td>Aucun médicament qui agit contre ce virus</td></tr>
+</table></div>
+<p class="note">Un médicament est toujours prescrit par un médecin. On ne se soigne jamais tout seul.</p></div>
+
+<p>Pour chaque patient, choisis le <b>type d’infection</b>, puis le <b>traitement adapté</b>.</p>
+<div id="cases"></div>
+
+<h2>Partie 3 : le bilan</h2>
+<div class="q" id="bil">
+<p>Complète les phrases.</p>
+<p>Les antibiotiques agissent uniquement contre les infections <select data-a="b"><option value="">choisis…</option><option value="b">bactériennes</option><option value="v">virales</option></select>.</p>
+<p>Les antiviraux agissent contre <select data-a="c"><option value="">choisis…</option><option value="c">certaines</option><option value="t">toutes</option></select> infections virales.</p>
+<p>Pour une infection virale sans antiviral, comme le rhume, le médecin ne prescrit pas d’antibiotique car <select data-a="i"><option value="">choisis…</option><option value="i">il serait inutile contre un virus</option><option value="d">il serait dangereux pour les bactéries</option></select>.</p>
+<p class="fb" hidden></p></div>
+
+<div class="q"><p><b>Pour conclure :</b> un élève a la grippe et demande des antibiotiques à ses parents. Explique-lui pourquoi ce n’est pas la bonne solution.</p>
+<div class="chips" id="chips"></div>
+<label>Prénom <input type="text" id="nom" autocomplete="given-name"></label>
+<textarea id="rap" aria-label="Ta réponse"></textarea>
+<div class="note" id="cnt">0 mot</div>
+<div class="row"><button class="main" id="copy">Copier ma réponse</button><span id="cm" class="note"></span></div></div>
+</main>
+<script>
+var $=function(s){return document.querySelector(s)},pts={};
+var TY={b:"bactérienne",v:"virale"},TR={ab:"un antibiotique",av:"un antiviral",no:"aucun médicament qui agit contre le virus : repos et soin des symptômes"};
+var C=[
+["Angine","Léa a mal à la gorge et de la fièvre. Les analyses montrent qu’une bactérie en est responsable : le streptocoque.","b","ab","C’est une bactérie, et d’après le document 1, seuls les antibiotiques agissent contre les infections bactériennes."],
+["Infection urinaire","Tom a mal en urinant. Les analyses trouvent une bactérie, le colibacille.","b","ab","Là encore une bactérie : le médecin prescrit un antibiotique (document 1)."],
+["Herpès labial","Inès a un bouton de fièvre sur la lèvre, causé par le virus de l’herpès.","v","av","C’est un virus, et le document 2 indique qu’un antiviral existe contre l’herpès."],
+["Grippe sévère","M. Dupont, 82 ans, a une grippe sévère causée par le virus de la grippe.","v","av","C’est un virus, et le document 2 indique qu’un antiviral existe pour les formes sévères ou les personnes fragiles."],
+["Rhume","Samir a le nez qui coule. Il est enrhumé à cause d’un virus du rhume.","v","no","C’est un virus, mais d’après le document 2 aucun médicament n’agit contre lui. Un antibiotique ne servirait à rien (document 1)."]];
+function upd(){var n=0;for(var k in pts)n+=pts[k];$('#score').textContent='Bonnes réponses : '+n+' / 17'}
+C.forEach(function(c,i){var d=document.createElement('div');d.className='q';
+ d.innerHTML='<h3 style="margin:.1rem 0">'+(i+1)+'. '+c[0]+'</h3><p>'+c[1]+'</p>'+
+ '<div class="row">Infection : <select class="t"><option value="">choisis…</option><option value="b">bactérienne</option><option value="v">virale</option></select></div>'+
+ '<div class="row">Traitement adapté : <select class="r"><option value="">choisis…</option><option value="ab">un antibiotique</option><option value="av">un antiviral</option><option value="no">'+TR.no+'</option></select></div><p class="fb" hidden></p>';
+ var t=d.querySelector('.t'),r=d.querySelector('.r'),f=d.querySelector('.fb');
+ function ck(){if(!t.value||!r.value)return;var a=t.value===c[2],b=r.value===c[3];pts['c'+i]=(a?1:0)+(b?1:0);upd();
+  f.hidden=false;f.className='fb '+(a&&b?'ok':'no');
+  f.textContent=a&&b?'Exact ! '+c[4]:(a?'Le type d’infection est bon, mais pas le traitement. ':b?'Le traitement est bon, mais pas le type d’infection. ':'Ni le type ni le traitement ne conviennent. ')+'Relis les documents.'}
+ t.onchange=ck;r.onchange=ck;$('#cases').appendChild(d)});
+var bs=document.querySelectorAll('#bil select');
+bs.forEach(function(s){s.onchange=function(){var f=$('#bil .fb'),ok=0,all=1;
+ bs.forEach(function(x){if(!x.value)all=0;else if(x.value===x.dataset.a)ok++});
+ pts.bil=ok;upd();if(!all)return;f.hidden=false;f.className='fb '+(ok===3?'ok':'no');
+ f.textContent=ok===3?'Bravo, ton bilan est juste !':'Il y a une erreur : relis les documents et reprends.'}});
+var ds=document.querySelectorAll('#dec select');
+ds.forEach(function(s){s.onchange=function(){var f=$('#dec .fb'),ok=0,all=1;
+ ds.forEach(function(x){if(!x.value)all=0;else if(x.value===x.dataset.a)ok++});
+ pts.dec=ok;upd();if(!all)return;f.hidden=false;f.className='fb '+(ok===4?'ok':'no');
+ f.textContent=ok===4?'Bravo, tu as bien compris les types de traitements !':'Il y a une erreur : relis le document 1 avant de passer aux dossiers.'}});
+var kw=["bactérie","virus","antibiotique","antiviral","médecin"],st=["bacteri","virus","antibiotique","antiviral","medecin"];
+kw.forEach(function(k){var s=document.createElement('span');s.className='tag';s.textContent=k;$('#chips').appendChild(s)});
+function norm(t){return t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
+$('#rap').oninput=function(){var t=norm(this.value),n=this.value.trim()?this.value.trim().split(/\s+/).length:0;
+ document.querySelectorAll('#chips .tag').forEach(function(c,i){c.classList.toggle('on',t.indexOf(st[i])>-1)});
+ $('#cnt').textContent=n+(n>1?' mots':' mot')};
+$('#copy').onclick=function(){var t=($('#nom').value?$('#nom').value+' : ':'')+$('#rap').value,m=$('#cm');
+ try{navigator.clipboard.writeText(t).then(function(){m.textContent='Copié, tu peux le coller.'},function(){m.textContent='Copie impossible : sélectionne ton texte à la main.'})}catch(e){m.textContent='Copie impossible : sélectionne ton texte à la main.'}};
+</script>
+</body>
+</html>
