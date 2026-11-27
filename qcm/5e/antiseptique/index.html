@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mission bonus : l’enquête de l’agent anti-microbes</title>
+<style>
+:root{--bg:#f3f6fa;--card:#fff;--ink:#12263a;--mut:#53677b;--acc:#0d7f84;--accbg:#e2f3f3;--stamp:#c8322d;--ok:#1b7a46;--okbg:#e4f5ea;--bad:#b3261e;--badbg:#fdeceb;--line:#d3dde8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1a27;--card:#14263a;--ink:#e8eff6;--mut:#9fb2c5;--acc:#4fd0d5;--accbg:#12353d;--stamp:#ff7b73;--ok:#74e0a1;--okbg:#14342a;--bad:#ff9a92;--badbg:#3a1d1f;--line:#2a4058}}
+:root[data-theme="dark"]{--bg:#0d1a27;--card:#14263a;--ink:#e8eff6;--mut:#9fb2c5;--acc:#4fd0d5;--accbg:#12353d;--stamp:#ff7b73;--ok:#74e0a1;--okbg:#14342a;--bad:#ff9a92;--badbg:#3a1d1f;--line:#2a4058}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:17px/1.6 Georgia,"Iowan Old Style","Times New Roman",serif}
+main{max-width:46rem;margin:0 auto;padding:1rem 1rem 3rem}
+h1,h2,h3,button,select,.tag{font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif}
+header{position:relative;padding:1.4rem 1.2rem 1.2rem;margin-top:.6rem;background:var(--card);border:2px solid var(--ink);border-radius:6px}
+h1{font-size:1.7rem;line-height:1.2;margin:.2rem 0 .6rem;max-width:80%}
+.stamp{position:absolute;top:1rem;right:.8rem;transform:rotate(9deg);border:3px solid var(--stamp);color:var(--stamp);padding:.1rem .5rem;font:700 .85rem "Trebuchet MS",sans-serif;border-radius:4px;opacity:.9}
+h2{font-size:1.3rem;margin:2.2rem 0 .6rem;padding-bottom:.3rem;border-bottom:2px solid var(--ink)}
+section>p,.box p{margin:.5rem 0}
+.box,.q{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:.9rem 1rem;margin:.8rem 0}
+.box ul{margin:.4rem 0;padding-left:1.2rem}
+.q>p:first-child{margin-top:0}
+button,select{font-size:.95rem;padding:.45rem .8rem;border-radius:5px;border:1.5px solid var(--acc);background:var(--card);color:var(--ink);cursor:pointer}
+button:hover{background:var(--accbg)}
+button:focus-visible,select:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+button.main{background:var(--acc);color:var(--card);font-weight:700}
+textarea,input[type=text]{width:100%;box-sizing:border-box;font:inherit;padding:.5rem;border:1.5px solid var(--line);border-radius:5px;background:var(--bg);color:var(--ink)}
+textarea{min-height:5rem;resize:vertical;margin:.3rem 0}
+.ans,.fb{margin:.5rem 0 0;padding:.5rem .7rem;border-radius:5px;font-size:.95rem}
+.ans{background:var(--accbg)}
+.ok{background:var(--okbg);color:var(--ok)}.no{background:var(--badbg);color:var(--bad)}
+.row{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin:.4rem 0}
+.vf{border-top:1px dashed var(--line);padding:.5rem 0}
+.vf:first-of-type{border:0}
+.seq{font:700 1.3rem "Trebuchet MS",sans-serif;letter-spacing:.2rem;min-height:1.8rem}
+.code{font:700 1.6rem "Trebuchet MS",sans-serif;letter-spacing:.3rem}
+.chips{display:flex;gap:.4rem;flex-wrap:wrap;margin:.4rem 0}
+.tag{border:1.5px solid var(--line);color:var(--mut);padding:.1rem .6rem;border-radius:99px;font-size:.85rem}
+.tag.on{border-color:var(--ok);background:var(--okbg);color:var(--ok)}
+.score{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--ink);color:var(--bg);font:600 .9rem "Trebuchet MS",sans-serif;padding:.4rem .8rem;border-radius:0 0 6px 6px}
+label{display:block;margin:.3rem 0}
+@media(prefers-reduced-motion:no-preference){.ans,.fb{animation:f .25s}@keyframes f{from{opacity:0}}}
+</style>
+</head>
+<body>
+<div class="score" id="score">Points automatiques : 0 / 6</div>
+<main>
+<header>
+  <span class="stamp">CONFIDENTIEL</span>
+  <h1>Mission bonus : l’enquête de l’agent anti-microbes</h1>
+  <p>Bravo, tu as terminé le TP avant les autres ! Un dossier confidentiel vient d’arriver sur ton bureau : tu es nommé·e <b>agent·e spécial·e anti-microbes</b>. Prêt·e pour ta mission ?</p>
+</header>
+
+<h2>Dossier n° 1 : l’affaire des microbes immobiles</h2>
+<div class="box">
+  <p><b>Les faits :</b> au microscope, tu as observé ce qui se passait avant et après l’ajout d’un antiseptique.</p>
+  <p><b>Ta mission :</b> comprendre ce qui s’est passé grâce aux pièces à conviction, puis rédiger ton rapport.</p>
+</div>
+
+<h2>Pièces à conviction : le dossier secret des antiseptiques</h2>
+<div class="box">
+  <p>Ta peau est habitée par des milliers de micro-organismes. La plupart sont de simples passagers sans danger, mais si certains entrent dans le corps par une plaie, ils peuvent se multiplier et provoquer une <b>infection</b>.</p>
+  <h3>Portrait-robot de l’antiseptique</h3>
+  <ul>
+    <li><b>Exemples connus :</b> chlorhexidine, polyvidone iodée, alcool à 70 %.</li>
+    <li><b>Terrain d’action :</b> la peau et les plaies, c’est-à-dire le vivant.</li>
+    <li><b>Pouvoir :</b> il détruit les micro-organismes ou bloque leur développement.</li>
+    <li><b>Point faible :</b> son effet ne dure pas toujours, et mal utilisé il peut irriter la peau.</li>
+    <li><b>À ne pas confondre avec :</b> le <b>désinfectant</b>, trop agressif pour la peau, qui sert à nettoyer les objets et les surfaces (table, sol, instruments).</li>
+  </ul>
+  <p><b>Ce que révèle le microscope :</b> des micro-organismes immobiles ont cessé toute activité. L’antiseptique les a tués ou très fortement affaiblis, et ils ne peuvent plus se multiplier dans la plaie.</p>
+  <h3>Les grands enquêteurs de l’histoire</h3>
+  <ul>
+    <li><b>1847 :</b> le médecin Ignace Semmelweis impose aux soignants de se laver les mains avec une solution chlorée avant d’examiner les patientes. Les décès après les accouchements diminuent fortement.</li>
+    <li><b>Années 1860 :</b> Louis Pasteur montre que les infections sont provoquées par des micro-organismes. Le chirurgien Joseph Lister nettoie les plaies et les instruments avec de l’acide phénique.</li>
+  </ul>
+</div>
+
+<h2>Épreuve 1 : l’interrogatoire</h2>
+<p>Réponds aux questions. Si tu réussis la question 6, tu obtiens le <b>code secret</b> de la mission : montre-le à ton enseignante.</p>
+
+<div class="q free"><p><b>1.</b> Un enquêteur te demande : « C’est quoi, un antiseptique ? » Réponds avec tes mots.</p>
+  <textarea aria-label="Réponse 1"></textarea></div>
+
+<div class="q free"><p><b>2.</b> Interroge le témoin : qu’as-tu observé au microscope après l’ajout de l’antiseptique ? Que peux-tu en déduire ?</p>
+  <textarea aria-label="Réponse 2"></textarea></div>
+
+<div class="q" id="q3"><p><b>3.</b> Qui est qui ? Complète les phrases.</p>
+  <div class="row">Un antiseptique s’applique sur <select data-a="1"><option value="0">choisis…</option><option value="1">la peau vivante ou une plaie</option><option value="2">des objets et des surfaces</option></select></div>
+  <div class="row">Un désinfectant s’utilise sur <select data-a="2"><option value="0">choisis…</option><option value="1">la peau vivante ou une plaie</option><option value="2">des objets et des surfaces</option></select></div>
+  <p class="fb" hidden></p></div>
+
+<div class="q" id="q4"><p><b>4.</b> Démasque les fausses informations : vrai ou faux ?</p><div id="vf"></div></div>
+
+<div class="q free"><p><b>5.</b> Enquête dans l’histoire : d’après le dossier, pourquoi le lavage des mains imposé par Semmelweis a-t-il fait baisser le nombre de décès ?</p>
+  <textarea aria-label="Réponse 5"></textarea></div>
+
+<div class="q" id="q6"><p><b>6.</b> Urgence à la récréation ! Un élève se coupe le doigt. Clique sur les gestes dans le bon ordre.</p>
+  <div class="row" id="gestes"></div>
+  <div class="seq" id="seq" aria-live="polite"></div>
+  <p class="fb" id="fb6" hidden></p>
+  <button id="reset6">Recommencer</button></div>
+
+<div class="q free"><p><b>7. Pour les super enquêteurs (facultatif).</b> Un autre agent affirme : « Si les micro-organismes sont immobiles, ils sont forcément morts. » Es-tu d’accord ? Propose une expérience pour le vérifier.</p>
+  <textarea aria-label="Réponse 7"></textarea></div>
+
+<h2>Épreuve 2 : le rapport de mission</h2>
+<div class="q">
+  <p>Ton chef t’adresse une dernière question : <b>« Comment un antiseptique protège-t-il l’organisme contre les infections ? »</b> Rédige ton rapport en 4 à 6 lignes avec les mots-clés ci-dessous.</p>
+  <div class="chips" id="chips"></div>
+  <p style="font-size:.9rem;color:var(--mut)">Pour démarrer : « J’ai observé au microscope que… » ; « J’en déduis que l’antiseptique… » ; « Ainsi, lorsqu’on l’applique sur une plaie… » ; « Cependant, il faut faire attention car… »</p>
+  <label>Prénom <input type="text" id="nom" autocomplete="given-name"></label>
+  <textarea id="rap" style="min-height:9rem" aria-label="Rapport de mission"></textarea>
+  <div id="cnt" style="font-size:.9rem;color:var(--mut)">0 mot</div>
+  <p><b>Contrôle qualité avant de rendre ton rapport :</b></p>
+  <label><input type="checkbox" class="chk"> J’ai répondu à la question posée.</label>
+  <label><input type="checkbox" class="chk"> J’ai utilisé tous les mots-clés.</label>
+  <label><input type="checkbox" class="chk"> J’ai relié mon observation au microscope à la protection contre l’infection.</label>
+  <label><input type="checkbox" class="chk"> Mes phrases sont complètes et je me suis relu(e).</label>
+  <p class="fb ans" id="grade">Coche les critères validés pour découvrir ton grade.</p>
+  <div class="row"><button class="main" id="copy">Copier mon rapport</button><span id="cm" style="font-size:.9rem"></span></div>
+</div>
+</main>
+<script>
+var $=function(s){return document.querySelector(s)},pts={q3:0,q4:0,q6:0};
+function upd(){var t=pts.q3+pts.q4+pts.q6;$('#score').textContent='Points automatiques : '+t+' / 6'}
+/* Q3 */
+var sel=document.querySelectorAll('#q3 select');
+sel.forEach(function(s){s.onchange=function(){
+  var v=[].map.call(sel,function(x){return x.value}),fb=$('#q3 .fb');
+  if(v.indexOf('0')>-1)return;
+  var ok=v[0]==='1'&&v[1]==='2';fb.hidden=false;fb.className='fb '+(ok?'ok':'no');
+  fb.textContent=ok?'Exact ! Antiseptique : le vivant. Désinfectant : les objets et les surfaces.':'Pas tout à fait. Relis le portrait-robot : où agit chaque produit ?';
+  pts.q3=ok?1:0;upd()}});
+/* Q4 */
+var vf=[["On peut utiliser un antiseptique sur une plaie.",true,"Vrai : c’est même son rôle."],["Après un antiseptique, on est protégé pour toute la journée.",false,"Faux : l’effet est temporaire, de nouveaux micro-organismes peuvent revenir."],["Tous les produits qui nettoient une table sont des antiseptiques.",false,"Faux : ce sont des désinfectants."],["Un antiseptique peut irriter la peau s’il est mal utilisé.",true,"Vrai : il faut respecter le mode d’emploi."]],done={};
+vf.forEach(function(it,i){var d=document.createElement('div');d.className='vf';
+  d.innerHTML='<div>'+String.fromCharCode(97+i)+'. '+it[0]+'</div><div class="row"><button>Vrai</button><button>Faux</button></div><p class="fb" hidden></p>';
+  var bs=d.querySelectorAll('button'),fb=d.querySelector('.fb');
+  bs.forEach(function(b,j){b.onclick=function(){var ok=(j===0)===it[1];fb.hidden=false;fb.className='fb '+(ok?'ok':'no');
+    fb.textContent=(ok?'Bravo. ':'Pas tout à fait. ')+it[2];done[i]=ok;
+    pts.q4=Object.keys(done).filter(function(k){return done[k]}).length;upd()}});
+  $('#vf').appendChild(d)});
+/* Q6 */
+var g=[["a","appliquer un antiseptique"],["b","protéger avec un pansement"],["c","laver à l’eau et au savon"],["d","rincer et sécher"]],seq=[];
+function draw6(){var s=$('#seq'),f=$('#fb6');s.textContent=seq.join(' ').toUpperCase();
+  document.querySelectorAll('#gestes button').forEach(function(b){b.disabled=seq.indexOf(b.dataset.k)>-1});
+  if(seq.length<4){f.hidden=true;pts.q6=0;upd();return}
+  var ok=seq.join('')==='cdab';f.hidden=false;f.className='fb '+(ok?'ok':'no');
+  f.innerHTML=ok?'Bravo, agent·e ! Ton code secret : <span class="code">CDAB</span><br>Montre-le à ton enseignante pour valider la mission.':'Ce n’est pas le bon ordre. Indice : on nettoie la plaie avant de la protéger.';
+  pts.q6=ok?1:0;upd()}
+g.forEach(function(x){var b=document.createElement('button');b.dataset.k=x[0];b.textContent=x[0]+') '+x[1];
+  b.onclick=function(){if(seq.length<4){seq.push(x[0]);draw6()}};$('#gestes').appendChild(b)});
+$('#reset6').onclick=function(){seq=[];draw6()};
+/* Rapport */
+var kw=["micro-organismes","plaie","antiseptique","infection","microscope","immobiles"],stem=["microorganisme","plaie","antiseptique","infection","microscope","immobile"];
+kw.forEach(function(k){var s=document.createElement('span');s.className='tag';s.textContent=k;$('#chips').appendChild(s)});
+function norm(t){return t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/-/g,'')}
+$('#rap').oninput=function(){var t=norm(this.value),n=this.value.trim()?this.value.trim().split(/\s+/).length:0;
+  document.querySelectorAll('#chips .tag').forEach(function(c,i){c.classList.toggle('on',t.indexOf(stem[i])>-1)});
+  $('#cnt').textContent=n+(n>1?' mots':' mot')};
+var chk=document.querySelectorAll('.chk');
+chk.forEach(function(c){c.onchange=function(){var n=[].filter.call(chk,function(x){return x.checked}).length;
+  $('#grade').textContent=n===4?'4 critères validés : tu es agent·e expert·e !':n===3?'3 critères validés : tu es agent·e confirmé·e. Encore un petit effort.':'Relis ton rapport avant de le rendre : il te manque des critères.'}});
+$('#copy').onclick=function(){var t=($('#nom').value?$('#nom').value+' : ':'')+$('#rap').value,m=$('#cm');
+  function ok(){m.textContent='Rapport copié, tu peux le coller.'}
+  try{navigator.clipboard.writeText(t).then(ok,function(){m.textContent='Copie impossible : sélectionne ton texte à la main.'})}catch(e){m.textContent='Copie impossible : sélectionne ton texte à la main.'}};
+draw6();
+</script>
+</body>
+</html>
