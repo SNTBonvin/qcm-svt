@@ -122,5 +122,13 @@
     "slug": "antiseptique",
     "chemin": "/qcm/5e/antiseptique/",
     "date": "2026-11-27T10:45:39.063Z"
+  },
+  {
+    "titre": "Choix traitement",
+    "domaine": "Anti viraux/biotiques",
+    "niveau": "5e",
+    "slug": "traitement",
+    "chemin": "/qcm/5e/traitement/",
+    "date": "2026-11-27T10:54:38.061Z"
   }
 ]
